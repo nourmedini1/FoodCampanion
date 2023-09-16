@@ -7,8 +7,7 @@ class LoginLocalUsecase {
   final UsersRepository usersRepository;
 
   LoginLocalUsecase({required this.usersRepository});
-  Future<Either<Failure, UserEntity>> call(
-      String email, String password) async {
-    return await usersRepository.loginLocal(email, password);
+  Either<Failure, Unit> call(String password, UserEntity userEntity) {
+    return usersRepository.loginLocal(password, userEntity);
   }
 }

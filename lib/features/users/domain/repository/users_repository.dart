@@ -3,15 +3,15 @@ import 'package:food_campanion/core/failures_exceptions/failures/failures.dart';
 import 'package:food_campanion/features/users/domain/entities/user_entity.dart';
 
 abstract class UsersRepository {
-  Future<Either<Failure, UserEntity>> loginRemote(
+  Future<Either<Failure, Unit>> loginRemote(
       String email, String password); // shared Preferences
-  Future<Either<Failure, UserEntity>> loginLocal(
-      String email, String password); // shared prefernces
-  Future<Either<Failure, UserEntity>> signIn(
+  Either<Failure, Unit> loginLocal(
+      String password, UserEntity userEntity); // shared prefernces
+  Future<Either<Failure, Unit>> signIn(
       UserEntity userEntity); // shared Preferences
   Future<Either<Failure, Unit>> saveUser(UserEntity userEntity);
   Future<Either<Failure, List<UserEntity>>> getSavedUsers();
   Future<Either<Failure, Unit>> deleteUser(UserEntity userEntity);
-  Future<Either<Failure, UserEntity>> updateUser(
+  Future<Either<Failure, Unit>> updateUser(
       UserEntity userEntity); // shared preferences
 }

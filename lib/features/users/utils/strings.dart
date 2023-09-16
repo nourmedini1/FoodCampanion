@@ -1,0 +1,1 @@
+const String CURRENT_USER = 'CURRENT_USER';

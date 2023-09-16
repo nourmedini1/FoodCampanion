@@ -22,8 +22,16 @@ class RemoteDataSourceImpl extends RemoteDatasource {
         .get();
     if (user.size > 0) {
       final currentUser = user.docs.first;
-      final usermodel = UserModel.fromJson(currentUser.data());
-      return Future.value(usermodel);
+
+      UserModel model = UserModel(
+        email: currentUser.get('email'),
+        username: currentUser.get('username'),
+        country: currentUser.get('country'),
+        id: currentUser.id,
+        password: currentUser.get('password'),
+      );
+
+      return Future.value(model);
     } else {
       throw RemoteLoginException();
     }
@@ -36,7 +44,19 @@ class RemoteDataSourceImpl extends RemoteDatasource {
     bool test = false;
     await users.doc().set(body).whenComplete(() => test = true);
     if (test == true) {
-      return Future.value(userModel);
+      QuerySnapshot<Map<String, dynamic>> user = await users
+          .where('password', isEqualTo: userModel.password)
+          .where('email', isEqualTo: userModel.email)
+          .get();
+
+      UserModel model = UserModel(
+        email: userModel.email,
+        username: userModel.username,
+        country: userModel.country,
+        id: user.docs.first.get('id'),
+        password: userModel.password,
+      );
+      return Future.value(model);
     } else {
       throw SigninException();
     }
