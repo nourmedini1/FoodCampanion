@@ -5,7 +5,19 @@ class Failure extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoginFailure extends Failure {}
+class RemoteLoginFailure extends Failure {}
+
+class LocalLoginFailure extends Failure {}
+
+class SaveUserFailure extends Failure {}
+
+class RemoteUpdateFailure extends Failure {}
+
+class LocalUpdateFailure extends Failure {}
+
+class EmptyLocalDatabaseFailure extends Failure {}
+
+class DeleteUserFailure extends Failure {}
 
 class SigninFailure extends Failure {}
 
