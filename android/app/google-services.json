@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1073194563295",
+    "project_id": "foodcampanion",
+    "storage_bucket": "foodcampanion.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073194563295:android:4161c0172562cc449a5b6a",
+        "android_client_info": {
+          "package_name": "com.example.food_campanion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8j9nRCBKLF60DyuBrryjGPpNCyLymlaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
