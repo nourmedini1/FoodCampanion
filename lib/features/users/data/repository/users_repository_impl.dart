@@ -49,6 +49,7 @@ class UsersRepositoryImpl extends UsersRepository {
       final result = localDatasource.loginLocal(
           password, UserModel.fromEntity(userEntity));
       sharedPreferences.setString(CURRENT_USER, json.encode(result.toJson()));
+      sharedPreferences.setBool(LOGGED_IN, true);
       return right(unit);
     } on LocalLoginException {
       return left(LocalLoginFailure());
@@ -62,6 +63,7 @@ class UsersRepositoryImpl extends UsersRepository {
       try {
         final result = await remoteDatasource.loginRemote(email, password);
         sharedPreferences.setString(CURRENT_USER, json.encode(result.toJson()));
+        sharedPreferences.setBool(LOGGED_IN, true);
         return right(unit);
       } on RemoteLoginException {
         return left(RemoteLoginFailure());
@@ -88,6 +90,7 @@ class UsersRepositoryImpl extends UsersRepository {
         final result =
             await remoteDatasource.signIn(UserModel.fromEntity(userEntity));
         sharedPreferences.setString(CURRENT_USER, json.encode(result.toJson()));
+        sharedPreferences.setBool(LOGGED_IN, true);
         return right(unit);
       } on SigninException {
         return left(SigninFailure());
