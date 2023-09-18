@@ -48,6 +48,7 @@ class RemoteDataSourceImpl extends RemoteDatasource {
           .where('password', isEqualTo: userModel.password)
           .where('email', isEqualTo: userModel.email)
           .get();
+      await users.doc(user.docs.first.id).update({'id': user.docs.first.id});
 
       UserModel model = UserModel(
         email: userModel.email,
@@ -56,6 +57,7 @@ class RemoteDataSourceImpl extends RemoteDatasource {
         id: user.docs.first.get('id'),
         password: userModel.password,
       );
+
       return Future.value(model);
     } else {
       throw SigninException();

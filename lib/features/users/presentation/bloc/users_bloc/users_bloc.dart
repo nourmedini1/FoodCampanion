@@ -34,6 +34,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
       : super(UsersInitial()) {
     on<UsersEvent>((event, emit) async {
       if (event is UsersSignInEvent) {
+        print("signing in");
         emit(UsersLoadingState());
         final result = await signInUsecase.call(event.userEntity);
         result.fold(
