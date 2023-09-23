@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_campanion/core/network/internet_checker.dart';
-import 'package:food_campanion/features/users/data/datasources/local/app_database.dart';
 import 'package:food_campanion/features/users/data/datasources/local/local_datasource.dart';
 import 'package:food_campanion/features/users/data/datasources/remote/remote_datasource.dart';
 import 'package:food_campanion/features/users/data/repository/users_repository_impl.dart';
@@ -12,6 +11,7 @@ import 'package:food_campanion/features/users/domain/usecases/login_remote_useca
 import 'package:food_campanion/features/users/domain/usecases/save_user_usecase.dart';
 import 'package:food_campanion/features/users/domain/usecases/sign_in_usecase.dart';
 import 'package:food_campanion/features/users/domain/usecases/update_user_usecase.dart';
+import 'package:food_campanion/features/users/presentation/bloc/save_user_bloc/save_user_bloc.dart';
 import 'package:food_campanion/features/users/presentation/bloc/users_bloc/users_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -34,15 +34,12 @@ Future<void> init() async {
   //---------------------------- data-------------------------------
 
   //local datasouces
-  final database =
-      await $FloorAppDatabase.databaseBuilder('app_database.db').build();
-  sl.registerSingleton<AppDatabase>(database);
 
   final SharedPreferences sharedPreferences =
       await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
   sl.registerLazySingleton<LocalDatasource>(
-      () => LocalDataSourceImpl(appDatabase: sl()));
+      () => LocalDataSourceImpl(sharedPreferences: sl()));
 
   // remote datasources
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
@@ -69,12 +66,12 @@ Future<void> init() async {
 
   // ---------------- presentation ------------------------------
   //bloc
+  sl.registerFactory(() => SaveUserBloc(saveUserUsecase: sl()));
   sl.registerFactory(() => UsersBloc(
       deleteUserUsecase: sl(),
       getSavedUsersUsecase: sl(),
       loginLocalUsecase: sl(),
       loginRemoteUsecase: sl(),
-      saveUserUsecase: sl(),
       signInUsecase: sl(),
       updateUserUsecase: sl()));
 }

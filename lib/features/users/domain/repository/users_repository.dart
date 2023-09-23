@@ -7,7 +7,7 @@ abstract class UsersRepository {
       String email, String password); // shared Preferences
   Either<Failure, Unit> loginLocal(
       String password, UserEntity userEntity); // shared prefernces
-  Future<Either<Failure, Unit>> signIn(
+  Future<Either<Failure, UserEntity>> signIn(
       UserEntity userEntity); // shared Preferences
   Future<Either<Failure, Unit>> saveUser(UserEntity userEntity);
   Future<Either<Failure, List<UserEntity>>> getSavedUsers();

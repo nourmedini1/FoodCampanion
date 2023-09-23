@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:food_campanion/features/users/presentation/pages/local_login_page.dart';
 import 'package:food_campanion/features/users/presentation/pages/signup_page.dart';
 import 'package:food_campanion/features/users/presentation/widgets/app_motto.dart';
 import 'package:food_campanion/features/users/presentation/widgets/background_carousel_widget.dart';
 import 'package:food_campanion/features/users/presentation/widgets/button.dart';
 import 'package:food_campanion/features/users/presentation/widgets/login_bottom_sheet_widget.dart';
+import 'package:food_campanion/features/users/presentation/widgets/shadow_widget.dart';
 import 'package:food_campanion/features/users/utils/colors.dart';
 
 class LoginPage extends StatelessWidget {
@@ -40,9 +42,31 @@ class LoginPage extends StatelessWidget {
             ),
             signUpTextButton(context)
           ],
-        )
+        ),
+        Positioned(bottom: 20, left: 20, child: loginFromSavedAccount(context))
       ]);
     }));
+  }
+
+  GestureDetector loginFromSavedAccount(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const LocalLoginPage(),
+          )),
+      child: const Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: Text(
+          'Login from a saved Account',
+          style: TextStyle(
+            fontStyle: FontStyle.italic,
+            color: Colors.orangeAccent,
+            fontSize: 15,
+          ),
+        ),
+      ),
+    );
   }
 
   GestureDetector signUpTextButton(BuildContext context) {
@@ -58,23 +82,10 @@ class LoginPage extends StatelessWidget {
           'Sign up',
           style: TextStyle(
             color: Colors.orangeAccent,
-            fontSize: 15,
+            fontSize: 17,
           ),
         ),
       ),
-    );
-  }
-
-  Container shadow(double height, double width) {
-    return Container(
-      height: height,
-      width: width,
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-        colors: [transparent, black.withOpacity(0.99)],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      )),
     );
   }
 
@@ -103,7 +114,7 @@ class LoginPage extends StatelessWidget {
                         'lib/core/assets/images/signup_images/table.jpg'),
                     fit: BoxFit.fill),
               ),
-              child: LoginBottomSheetWidget(),
+              child: const LoginBottomSheetWidget(),
             ));
   }
 }

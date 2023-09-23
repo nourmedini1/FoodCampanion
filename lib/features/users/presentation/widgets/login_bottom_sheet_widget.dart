@@ -7,7 +7,7 @@ import 'package:food_campanion/features/users/presentation/widgets/button.dart';
 import 'package:food_campanion/features/users/utils/colors.dart';
 
 class LoginBottomSheetWidget extends StatefulWidget {
-  LoginBottomSheetWidget({super.key});
+  const LoginBottomSheetWidget({super.key});
 
   @override
   State<LoginBottomSheetWidget> createState() => _LoginBottomSheetWidgetState();
@@ -19,7 +19,7 @@ class _LoginBottomSheetWidgetState extends State<LoginBottomSheetWidget> {
   final emailController = TextEditingController();
   final passwordNode = FocusNode();
   final emailNode = FocusNode();
-  var isObscured;
+  dynamic isObscured;
   @override
   void initState() {
     super.initState();
@@ -64,7 +64,7 @@ class _LoginBottomSheetWidgetState extends State<LoginBottomSheetWidget> {
               focusNode: emailNode,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                  fillColor: Color.fromARGB(255, 245, 235, 216),
+                  fillColor: const Color.fromARGB(255, 245, 235, 216),
                   filled: true,
                   prefixIcon: const Icon(FontAwesomeIcons.person),
                   prefixIconColor: Colors.orangeAccent,
@@ -101,7 +101,7 @@ class _LoginBottomSheetWidgetState extends State<LoginBottomSheetWidget> {
               focusNode: passwordNode,
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
-                  fillColor: Color.fromARGB(255, 245, 235, 216),
+                  fillColor: const Color.fromARGB(255, 245, 235, 216),
                   filled: true,
                   suffixIcon: IconButton(
                     padding: const EdgeInsets.all(10),
@@ -190,7 +190,12 @@ class _LoginBottomSheetWidgetState extends State<LoginBottomSheetWidget> {
                       () =>
                           login(emailController.text, passwordController.text));
                 } else if (state is UsersSuccessState) {
-                  return button('logged In', greenLight, greenDark, () => null);
+                  return button(
+                      'Login',
+                      yellow,
+                      orange,
+                      () =>
+                          login(emailController.text, passwordController.text));
                 }
                 return button('Login', yellow, orange,
                     () => login(emailController.text, passwordController.text));

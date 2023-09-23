@@ -84,14 +84,14 @@ class UsersRepositoryImpl extends UsersRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> signIn(UserEntity userEntity) async {
+  Future<Either<Failure, UserModel>> signIn(UserEntity userEntity) async {
     if (await internetChecker.isConnected) {
       try {
         final result =
             await remoteDatasource.signIn(UserModel.fromEntity(userEntity));
         sharedPreferences.setString(CURRENT_USER, json.encode(result.toJson()));
         sharedPreferences.setBool(LOGGED_IN, true);
-        return right(unit);
+        return right(result);
       } on SigninException {
         return left(SigninFailure());
       }

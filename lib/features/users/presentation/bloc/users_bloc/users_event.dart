@@ -42,14 +42,6 @@ class UsersDeleteUserEvent extends UsersEvent {
   List<Object> get props => [userEntity];
 }
 
-class UsersSaveUserEvent extends UsersEvent {
-  final UserEntity userEntity;
-
-  const UsersSaveUserEvent({required this.userEntity});
-  @override
-  List<Object> get props => [userEntity];
-}
-
 class UsersSignInEvent extends UsersEvent {
   final UserEntity userEntity;
 

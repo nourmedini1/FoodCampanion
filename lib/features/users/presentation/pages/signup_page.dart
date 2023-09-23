@@ -3,10 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_campanion/core/widgets/loading_widget.dart';
 import 'package:food_campanion/features/users/domain/entities/user_entity.dart';
+import 'package:food_campanion/features/users/presentation/bloc/save_user_bloc/save_user_bloc.dart';
 import 'package:food_campanion/features/users/presentation/bloc/users_bloc/users_bloc.dart';
+import 'package:food_campanion/features/users/presentation/pages/home.dart';
 
 import 'package:food_campanion/features/users/presentation/widgets/button.dart';
+import 'package:food_campanion/features/users/presentation/widgets/shadow_widget.dart';
 import 'package:food_campanion/features/users/utils/colors.dart';
+import 'package:food_campanion/features/users/utils/strings.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -16,7 +20,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  var passObscured, confirmPassObscured;
+  dynamic passObscured, confirmPassObscured;
   final formKey = GlobalKey<FormState>();
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
@@ -28,9 +32,11 @@ class _SignUpPageState extends State<SignUpPage> {
   final confirmPasswordFocusNode = FocusNode();
   final emailFocusNode = FocusNode();
   final countryFocusNode = FocusNode();
+  dynamic visible;
 
   @override
   void initState() {
+    visible = false;
     passObscured = true;
     confirmPassObscured = true;
     emailController.text = '';
@@ -64,13 +70,13 @@ class _SignUpPageState extends State<SignUpPage> {
                     physics: const NeverScrollableScrollPhysics(),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height,
-                        maxWidth: MediaQuery.of(context).size.width,
+                        maxHeight: MediaQuery.of(ctx).size.height,
+                        maxWidth: MediaQuery.of(ctx).size.height,
                       ),
                       child: IntrinsicHeight(
                         child: Padding(
                           padding: const EdgeInsets.only(
-                              top: 40, bottom: 30, right: 10, left: 10),
+                              top: 40, bottom: 5, right: 10, left: 10),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -78,7 +84,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 left: 80,
                                 right: 80,
                                 top: 80,
-                                bottom: 120,
+                                bottom: 10,
                                 child: Text(
                                   'FoodCampanion\n           SignUp',
                                   style: TextStyle(
@@ -375,6 +381,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                                     color: Colors.white),
                                               )));
                                     } else if (state is UsersSuccessState) {
+                                      setState(() {
+                                        visible = true;
+                                      });
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
                                               backgroundColor:
@@ -414,8 +423,10 @@ class _SignUpPageState extends State<SignUpPage> {
                                               passwordController.text,
                                               countryController.text));
                                     } else if (state is UsersSuccessState) {
-                                      return button('Signed Up', greenLight,
-                                          greenDark, () => null);
+                                      if (state.userEntity != null) {
+                                        visible = true;
+                                        return saveUserBloc(state.userEntity);
+                                      }
                                     }
                                     return button(
                                         'SignUp',
@@ -428,30 +439,71 @@ class _SignUpPageState extends State<SignUpPage> {
                                             countryController.text));
                                   },
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
                       ),
                     ),
                   )),
-            )
+            ),
+            Visibility(
+                visible: visible,
+                child: Positioned(
+                    bottom: 20, right: 30, child: procedToHomeButton(context)))
           ],
         );
       }),
     );
   }
 
-  Container shadow(double height, double width) {
-    return Container(
-      height: height,
-      width: width,
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-        colors: [transparent, black.withOpacity(0.99)],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      )),
+  Widget saveUserBloc(UserEntity? userEntity) {
+    return BlocConsumer<SaveUserBloc, SaveUserState>(
+      listener: (context, state) {
+        if (state is SaveUserErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Colors.red,
+              dismissDirection: DismissDirection.up,
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height - 100,
+                  left: 10,
+                  right: 10),
+              duration: const Duration(seconds: 3),
+              content: const Text(
+                SAVE_USER_ERROR_MESSAGE,
+                style:
+                    TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+              )));
+        } else if (state is SaveUserSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Colors.lightGreen,
+              dismissDirection: DismissDirection.up,
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height - 100,
+                  left: 10,
+                  right: 10),
+              duration: const Duration(seconds: 3),
+              content: const Text(
+                SAVE_USER_SUCCESS_MESSAGE,
+                style:
+                    TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+              )));
+        }
+      },
+      builder: (context, state) {
+        if (state is SaveUserLoadingState) {
+          return const LoadingWidget();
+        } else if (state is SaveUserErrorState) {
+          return button(
+              'Save account', yellow, orange, () => saveAcount(userEntity));
+        } else if (state is SaveUserSuccessState) {
+          return button('Saved', greenLight, greenDark, () => null);
+        }
+        return button(
+            'Save account', yellow, orange, () => saveAcount(userEntity));
+      },
     );
   }
 
@@ -466,4 +518,37 @@ class _SignUpPageState extends State<SignUpPage> {
           .add(UsersSignInEvent(userEntity: userEntity));
     }
   }
+
+  saveAcount(UserEntity? userEntity) {
+    if (formKey.currentState!.validate() && userEntity != null) {
+      BlocProvider.of<SaveUserBloc>(context)
+          .add(SaveUserSaveEvent(userEntity: userEntity));
+    }
+  }
+}
+
+GestureDetector procedToHomeButton(BuildContext context) {
+  return GestureDetector(
+    onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const Home(),
+        )),
+    child: const Padding(
+      padding: EdgeInsets.only(top: 10),
+      child: Text(
+        'Proceed to Home',
+        style: TextStyle(
+          fontStyle: FontStyle.italic,
+          color: Colors.orangeAccent,
+          fontSize: 15,
+        ),
+      ),
+    ),
+  );
+}
+
+proceedToHome(BuildContext context) {
+  Route route = MaterialPageRoute(builder: (context) => const Home());
+  Navigator.pushReplacement(context, route);
 }

@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:food_campanion/core/failures_exceptions/exceptions.dart';
-import 'package:food_campanion/features/users/data/datasources/local/app_database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/user_model.dart';
 
@@ -13,15 +15,25 @@ abstract class LocalDatasource {
 }
 
 class LocalDataSourceImpl extends LocalDatasource {
-  final AppDatabase appDatabase;
+  SharedPreferences sharedPreferences;
 
-  LocalDataSourceImpl({required this.appDatabase});
+  LocalDataSourceImpl({required this.sharedPreferences});
   @override
-  Future<List<UserModel>> getSavedUsers() async {
-    final List<UserModel> savedUsers =
-        await appDatabase.userDao.getSavedUsers();
-    if (savedUsers.isNotEmpty) {
-      return savedUsers;
+  Future<List<UserModel>> getSavedUsers() {
+    final List<String>? savedUsers =
+        sharedPreferences.getStringList('SAVED_USERS');
+    if (savedUsers != null) {
+      if (savedUsers.isNotEmpty) {
+        final savedUsersMap = savedUsers
+            .map<Map<String, dynamic>>((user) => json.decode(user))
+            .toList();
+        final savedUsersModel = savedUsersMap
+            .map<UserModel>((jsonUser) => UserModel.fromJson(jsonUser))
+            .toList();
+        return Future.value(savedUsersModel);
+      } else {
+        throw EmptyLocalDataBaseException();
+      }
     } else {
       throw EmptyLocalDataBaseException();
     }
@@ -37,9 +49,18 @@ class LocalDataSourceImpl extends LocalDatasource {
   }
 
   @override
-  Future<Unit> saveUser(UserModel userModel) async {
+  Future<Unit> saveUser(UserModel userModel) {
+    List<String> toAdd = [];
     try {
-      await appDatabase.userDao.saveUser(userModel);
+      List<String>? savedUsers = sharedPreferences.getStringList('SAVED_USERS');
+      if (savedUsers != null) {
+        savedUsers.add(json.encode(userModel.toJson()));
+        toAdd = savedUsers;
+      } else {
+        toAdd = [json.encode(userModel.toJson())];
+      }
+      sharedPreferences.setStringList('SAVED_USERS', toAdd);
+
       return Future.value(unit);
     } catch (e) {
       throw SaveUserException();
@@ -49,7 +70,20 @@ class LocalDataSourceImpl extends LocalDatasource {
   @override
   Future<Unit> updateLocal(UserModel userModel) async {
     try {
-      await appDatabase.userDao.updateSavedUser(userModel);
+      List<String>? savedUsers = sharedPreferences.getStringList('SAVED_USERS');
+      final savedUsersMap = savedUsers
+          ?.map<Map<String, dynamic>>((user) => json.decode(user))
+          .toList();
+      final savedUsersModel = savedUsersMap!
+          .map<UserModel>((jsonUser) => UserModel.fromJson(jsonUser))
+          .toList();
+      savedUsersModel.removeWhere((element) => element == userModel);
+      savedUsersModel.add(userModel);
+      final List<String> listUserStrings = savedUsersModel
+          .map<String>((user) => json.encode(user.toJson()))
+          .toList();
+      sharedPreferences.setStringList('SAVED_USERS', listUserStrings);
+
       return Future.value(unit);
     } catch (e) {
       throw LocalUpdateException();
@@ -57,9 +91,20 @@ class LocalDataSourceImpl extends LocalDatasource {
   }
 
   @override
-  Future<Unit> deleteUser(UserModel userModel) async {
+  Future<Unit> deleteUser(UserModel userModel) {
     try {
-      await appDatabase.userDao.deleteUser(userModel);
+      List<String>? savedUsers = sharedPreferences.getStringList('SAVED_USERS');
+      final savedUsersMap = savedUsers
+          ?.map<Map<String, dynamic>>((user) => json.decode(user))
+          .toList();
+      final savedUsersModel = savedUsersMap!
+          .map<UserModel>((jsonUser) => UserModel.fromJson(jsonUser))
+          .toList();
+      savedUsersModel.removeWhere((element) => element == userModel);
+      final List<String> listUserStrings = savedUsersModel
+          .map<String>((user) => json.encode(user.toJson()))
+          .toList();
+      sharedPreferences.setStringList('SAVED_USERS', listUserStrings);
       return Future.value(unit);
     } catch (e) {
       throw DeleteUserException();

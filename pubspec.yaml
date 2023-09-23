@@ -80,6 +80,7 @@ flutter:
     - lib/core/assets/images/signup_images/photo3.jpg
     - lib/core/assets/images/signup_images/photo4.jpg
     - lib/core/assets/images/signup_images/photo5.jpg
+    - lib/core/assets/images/signup_images/photo6.jpg
     - lib/core/assets/images/signup_images/table.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
