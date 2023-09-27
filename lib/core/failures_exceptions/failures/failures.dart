@@ -22,3 +22,5 @@ class DeleteUserFailure extends Failure {}
 class SigninFailure extends Failure {}
 
 class OfflineFailure extends Failure {}
+
+class DataUnavailableFailure extends Failure {}

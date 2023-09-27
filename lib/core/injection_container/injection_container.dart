@@ -1,5 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_campanion/core/network/internet_checker.dart';
+import 'package:food_campanion/features/recipes/data/datasources/local/recipes_local_data_source.dart';
+import 'package:food_campanion/features/recipes/data/datasources/remote/recipes_remote_datasource.dart';
+import 'package:food_campanion/features/recipes/data/repository/recipes_repository_impl.dart';
+import 'package:food_campanion/features/recipes/domain/repository/recipes_repository.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/add_to_favorites_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/breakfast_recipes_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/burger_recipes_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/cake_recipes_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/dessert_recipes_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/dinner_recipes_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/drinks_recipes_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/get_favorites_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/pizza_recipe_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/popular_recipes_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/protein_recipes_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/random_recipe_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/related_to_country_recipes_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/search_recipe_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/vegan_recipes_usecase.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/recipes_bloc/recipes_bloc.dart';
 import 'package:food_campanion/features/users/data/datasources/local/local_datasource.dart';
 import 'package:food_campanion/features/users/data/datasources/remote/remote_datasource.dart';
 import 'package:food_campanion/features/users/data/repository/users_repository_impl.dart';
@@ -26,6 +46,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => http.Client());
   sl.registerLazySingleton<InternetChecker>(
       () => InternetCheckerImpl(internetConnectionChecker: sl()));
+  final SharedPreferences sharedPreferences =
+      await SharedPreferences.getInstance();
+  sl.registerLazySingleton(() => sharedPreferences);
 
   //! Features
 
@@ -35,9 +58,6 @@ Future<void> init() async {
 
   //local datasouces
 
-  final SharedPreferences sharedPreferences =
-      await SharedPreferences.getInstance();
-  sl.registerLazySingleton(() => sharedPreferences);
   sl.registerLazySingleton<LocalDatasource>(
       () => LocalDataSourceImpl(sharedPreferences: sl()));
 
@@ -74,4 +94,69 @@ Future<void> init() async {
       loginRemoteUsecase: sl(),
       signInUsecase: sl(),
       updateUserUsecase: sl()));
+
+// <<<<<<<<<<<<< Recipes Feature >>>>>>>>>>>>>>>
+
+// ------ data ---------
+
+//datasources
+
+//local
+  sl.registerLazySingleton<RecipesLocalDatasource>(
+      () => RecipesLocalDataSourceImpl(sharedPreferences: sl()));
+
+//remote
+
+  sl.registerLazySingleton<RecipesRemoteDataSource>(
+      () => RecipesRemoteDatasourceImpl(client: sl()));
+
+//repository
+  sl.registerLazySingleton<RecipesRepository>(() => RecipesRepositoryImpl(
+      recipesLocalDatasource: sl(),
+      recipesRemoteDataSource: sl(),
+      internetChecker: sl()));
+
+//----------- domain ----------------
+
+//usecases
+  sl.registerLazySingleton(
+      () => AddToFavoritesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(() => GetFavoritesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(
+      () => BreakfastRecipesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(() => DinnerRecipesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(() => DrinksRecipesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(() => BurgerRecipesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(() => PizzaRecipesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(() => CakeRecipesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(
+      () => DessertRecipesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(
+      () => PopularRecipesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(
+      () => ProteinRecipesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(() => RandomRecipeUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(
+      () => RelatedToCountryRecipesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(() => SearchRecipeUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(() => VeganRecipesUsecase(recipesRepository: sl()));
+
+//------------- presentation ----------------
+//bloc
+  sl.registerFactory(() => RecipesBloc(
+      addToFavoritesUsecase: sl(),
+      cakeRecipesUsecase: sl(),
+      breakfastRecipesUsecase: sl(),
+      burgerRecipesUsecase: sl(),
+      dessertRecipesUsecase: sl(),
+      dinnerRecipesUsecase: sl(),
+      drinksRecipesUsecase: sl(),
+      getFavoritesUsecase: sl(),
+      pizzaRecipesUsecase: sl(),
+      popularRecipesUsecase: sl(),
+      proteinRecipesUsecase: sl(),
+      randomRecipeUsecase: sl(),
+      relatedToCountryRecipesUsecase: sl(),
+      searchRecipeUsecase: sl(),
+      veganRecipesUsecase: sl()));
 }
