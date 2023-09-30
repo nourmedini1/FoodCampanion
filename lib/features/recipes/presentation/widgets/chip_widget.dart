@@ -19,16 +19,16 @@ class ChipWidget extends StatelessWidget {
         delay: const Duration(microseconds: 600),
         child: InkWell(
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => BlocProvider(
-                  create: (context) => sl<RecipesBloc>(),
-                  child: SearchResults(
-                    id: text,
-                  ),
-                ),
-              ),
-            );
+            //    Navigator.of(context).push(
+            //     MaterialPageRoute(
+            //     builder: (context) => BlocProvider(
+            //     create: (context) => sl<RecipesBloc>(),
+            //      child: SearchResults(
+            //        id: text,
+            //   ),
+            //  ),
+            //   ),
+            //   );
           },
           child: Container(
             decoration: BoxDecoration(

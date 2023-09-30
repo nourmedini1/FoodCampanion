@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:food_campanion/core/network/internet_checker.dart';
 import 'package:food_campanion/features/recipes/data/datasources/local/recipes_local_data_source.dart';
 import 'package:food_campanion/features/recipes/data/datasources/remote/recipes_remote_datasource.dart';
@@ -36,14 +37,13 @@ import 'package:food_campanion/features/users/presentation/bloc/users_bloc/users
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
   //! core
   sl.registerLazySingleton(() => InternetConnectionChecker());
-  sl.registerLazySingleton(() => http.Client());
+  sl.registerLazySingleton(() => Dio());
   sl.registerLazySingleton<InternetChecker>(
       () => InternetCheckerImpl(internetConnectionChecker: sl()));
   final SharedPreferences sharedPreferences =
@@ -108,7 +108,7 @@ Future<void> init() async {
 //remote
 
   sl.registerLazySingleton<RecipesRemoteDataSource>(
-      () => RecipesRemoteDatasourceImpl(client: sl()));
+      () => RecipesRemoteDatasourceImpl(dio: sl()));
 
 //repository
   sl.registerLazySingleton<RecipesRepository>(() => RecipesRepositoryImpl(

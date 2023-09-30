@@ -64,7 +64,7 @@ class RecipesAddToFavoritesEvent extends RecipesEvent {
 
 class RecipesPizzaEvent extends RecipesEvent {
   final String query;
-  final Map<String, dynamic> options;
+  final Map<String, dynamic>? options;
 
   const RecipesPizzaEvent({required this.query, required this.options});
 }
@@ -92,7 +92,7 @@ class RecipesRandomEvent extends RecipesEvent {
 
 class RecipesRelatedToCountryEvent extends RecipesEvent {
   final String country;
-  final Map<String, dynamic> options;
+  final Map<String, dynamic>? options;
 
   const RecipesRelatedToCountryEvent(
       {required this.country, required this.options});
@@ -107,7 +107,7 @@ class RecipesSearchEvent extends RecipesEvent {
 
 class RecipesVeganEvent extends RecipesEvent {
   final String query;
-  final Map<String, dynamic> options;
+  final Map<String, dynamic>? options;
 
   const RecipesVeganEvent({required this.query, required this.options});
 }
