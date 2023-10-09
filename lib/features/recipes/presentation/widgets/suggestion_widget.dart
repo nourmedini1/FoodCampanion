@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:food_campanion/core/injection_container/injection_container.dart';
-import 'package:food_campanion/features/recipes/presentation/bloc/recipes_bloc/recipes_bloc.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/search_result_bloc/search_result_bloc.dart';
+import 'package:food_campanion/features/recipes/presentation/pages/search_results.dart';
 
 import '../../domain/entities/category_entity.dart';
 
@@ -14,6 +15,7 @@ Widget suggestions(List<CategoryEntity> categories) {
         height: 120,
         child: ListView.separated(
             scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
             separatorBuilder: (context, index) => const SizedBox(
                   width: 0,
                 ),
@@ -24,10 +26,10 @@ Widget suggestions(List<CategoryEntity> categories) {
                     context,
                     MaterialPageRoute(
                       builder: (context) => BlocProvider(
-                        create: (context) => sl<RecipesBloc>(),
-                        //    child: RecipeResults(
-                        //      item: categories[index].name,
-                        //    ),
+                        create: (context) => sl<SearchResultBloc>(),
+                        child: SearchResults(
+                          id: categories[index].name,
+                        ),
                       ),
                     ),
                   );

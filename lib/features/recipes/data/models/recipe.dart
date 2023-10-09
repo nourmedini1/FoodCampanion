@@ -16,7 +16,7 @@ class Recipe {
   bool? lowFodmap;
   int? aggregateLikes;
   double? spoonacularScore;
-  double? healthScore;
+  int? healthScore;
   String? creditsText;
   String? license;
   String? sourceName;
@@ -91,7 +91,7 @@ class Recipe {
         lowFodmap: json['lowFodmap'] as bool?,
         aggregateLikes: json['aggregateLikes'] as int?,
         spoonacularScore: json['spoonacularScore'] as double?,
-        healthScore: json['healthScore'] as double?,
+        healthScore: json['healthScore'] as int?,
         creditsText: json['creditsText'] as String?,
         license: json['license'] as String?,
         sourceName: json['sourceName'] as String?,
@@ -106,7 +106,7 @@ class Recipe {
         sourceUrl: json['sourceUrl'] as String?,
         image: json['image'] as String?,
         imageType: json['imageType'] as String?,
-        summary: json['summary'] as String?,
+        summary: stringifySummary(json['summary']),
         cuisines: json['cuisines'] as List<dynamic>?,
         dishTypes: json['dishTypes'] as List<dynamic>?,
         diets: json['diets'] as List<dynamic>?,
@@ -158,4 +158,13 @@ class Recipe {
         'originalId': originalId,
         'spoonacularSourceUrl': spoonacularSourceUrl,
       };
+}
+
+String stringifySummary(String summary) {
+  final toReplace = ["<b>", "</b>", "<a href=\\", "</a>"];
+  for (var element in toReplace) {
+    summary = summary.replaceAll(element, "");
+  }
+  summary = summary.replaceAll(".", ".\n");
+  return summary;
 }

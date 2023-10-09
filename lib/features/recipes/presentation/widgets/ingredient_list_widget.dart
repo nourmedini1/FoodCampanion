@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:food_campanion/features/recipes/domain/entities/recipe_entity.dart';
+import 'package:food_campanion/features/recipes/data/models/extended_ingredient.dart';
 import 'package:food_campanion/features/recipes/presentation/widgets/ingredient_item.dart';
 
-Widget ingredientListWidget(List<Ingredient> ingredients) {
+Widget ingredientListWidget(List<ExtendedIngredient> ingredients) {
   List<Widget> list =
       ingredients.map((ingredient) => ingredientItem(ingredient)).toList();
   list.insert(

@@ -1,7 +1,5 @@
-import 'package:floor/floor.dart';
 import 'package:food_campanion/features/users/domain/entities/user_entity.dart';
 
-@Entity(tableName: 'user', primaryKeys: ['id'])
 class UserModel extends UserEntity {
   const UserModel(
       {required super.email,

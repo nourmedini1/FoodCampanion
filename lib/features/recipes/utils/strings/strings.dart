@@ -1,4 +1,5 @@
-const String DATA_UNAVAILABLE_ERROR_MESSAGE = "No data found";
+// ignore: constant_identifier_names
+const DATA_UNAVAILABLE_ERROR_MESSAGE = "No data found";
 // ignore: constant_identifier_names
 const BASE_URL = 'https://api.spoonacular.com/recipes/';
 // ignore: constant_identifier_names
@@ -11,3 +12,5 @@ const INFORMATION_PATH = '/information?';
 const SIMILAR_PATH = '/similar?';
 // ignore: constant_identifier_names
 const API_KEY = 'eca67569f3bc4c748d41c96f5146b178';
+// ignore: constant_identifier_names
+const RANDOM_RACIPE_PATH = '/random?number=1';

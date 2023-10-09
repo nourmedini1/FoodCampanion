@@ -1,62 +1,65 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:food_campanion/core/injection_container/injection_container.dart';
-import 'package:food_campanion/features/recipes/presentation/bloc/recipes_bloc/recipes_bloc.dart';
-import 'package:food_campanion/features/users/utils/colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:food_campanion/core/widgets/custom_error_widget.dart';
+import 'package:food_campanion/core/widgets/loading_widget.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/home_bloc/home_bloc.dart';
+import 'package:food_campanion/features/recipes/presentation/widgets/home_widget.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => _HomeRecipeScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeRecipeScreenState extends State<HomePage> {
+  late final HomeBloc bloc;
   @override
   void initState() {
-    String country = 'england';
-    SharedPreferences sharedPreferences = sl<SharedPreferences>();
-    Map<String, dynamic>? user =
-        json.decode(sharedPreferences.getString('CURRENT_USER')!);
-    if (user != null) {
-      country = user['country'];
-    }
+    bloc = BlocProvider.of<HomeBloc>(context);
+    bloc.add(LoadHomeEvent());
 
-    RecipesBloc bloc = BlocProvider.of<RecipesBloc>(context);
-
-    bloc.add(RecipesRelatedToCountryEvent(country: country, options: null));
-    Future.delayed(const Duration(milliseconds: 200)).then((_) => bloc
-        .add(const RecipesBreakfastEvent(query: 'breakfast', options: null)));
-    Future.delayed(const Duration(milliseconds: 200)).then((_) =>
-        bloc.add(const RecipesDinnerEvent(query: 'dinner', options: null)));
-    Future.delayed(const Duration(milliseconds: 200)).then((_) =>
-        bloc.add(const RecipesBurgerEvent(query: 'burger', options: null)));
-    Future.delayed(const Duration(milliseconds: 200)).then(
-        (_) => bloc.add(const RecipesCakeEvent(query: 'cake', options: null)));
-    Future.delayed(const Duration(milliseconds: 200)).then((_) =>
-        bloc.add(const RecipesDessertEvent(query: 'dessert', options: null)));
-    Future.delayed(const Duration(milliseconds: 200)).then((_) =>
-        bloc.add(const RecipesDrinksEvent(query: 'drinks', options: null)));
-    Future.delayed(const Duration(milliseconds: 200)).then((_) =>
-        bloc.add(const RecipesPizzaEvent(query: 'pizza', options: null)));
-    Future.delayed(const Duration(milliseconds: 200)).then((_) =>
-        bloc.add(const RecipesVeganEvent(query: 'vegan', options: null)));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.white,
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          title: const Text(
+            "                     FoodCampanion",
+            style: TextStyle(
+                color: Colors.orange,
+                fontFamily: 'acme',
+                fontSize: 30,
+                fontWeight: FontWeight.w900),
+          ),
+        ),
         backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        title: const Text(
-          'FoodCampanion',
-          style: TextStyle(color: Colors.black),
+        body: BlocBuilder<HomeBloc, HomeState>(
+          builder: (context, state) {
+            if (state is HomeLoadingState) {
+              return const Center(child: LoadingWidget());
+            } else if (state is HomeSuccessState) {
+              return HomeScreenWidget(
+                  breakfast: state.breakfast,
+                  vegan: state.vegan,
+                  drinks: state.drinks,
+                  burgers: state.burgers,
+                  pizza: state.pizza,
+                  cake: state.cake,
+                  soup: state.soup,
+                  salad: state.salad);
+            } else if (state is HomeErrorState) {
+              return Center(child: customErrorWidget('Something went Wrong'));
+            } else {
+              return const Center(child: LoadingWidget());
+            }
+          },
         ),
       ),
     );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:food_campanion/features/recipes/domain/entities/recipe_entity.dart';
+import 'package:food_campanion/features/recipes/data/models/recipe.dart';
 import 'package:food_campanion/features/users/utils/colors.dart';
 
-Widget summaryWidget(RecipeEntity recipeEntity) {
+Widget summaryWidget(Recipe recipeEntity) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 10),
     decoration: BoxDecoration(
@@ -29,7 +29,7 @@ Widget summaryWidget(RecipeEntity recipeEntity) {
           flex: 1,
           child: Column(
             children: [
-              Text('${recipeEntity.totalTime} min',
+              Text('${recipeEntity.readyInMinutes} min',
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 20)),
               Text(
@@ -50,7 +50,7 @@ Widget summaryWidget(RecipeEntity recipeEntity) {
           flex: 1,
           child: Column(
             children: [
-              Text(recipeEntity.recipeYield.toString(),
+              Text(recipeEntity.servings.toString(),
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 20)),
               Text(
@@ -69,10 +69,11 @@ Widget summaryWidget(RecipeEntity recipeEntity) {
           flex: 1,
           child: Column(
             children: [
-              Text(recipeEntity.calories.toString(),
+              Text(recipeEntity.pricePerServing.toString(),
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 20)),
-              Text("Calories", style: TextStyle(color: Colors.grey.shade600))
+              Text("Price/Serving",
+                  style: TextStyle(color: Colors.grey.shade600))
             ],
           ),
         )

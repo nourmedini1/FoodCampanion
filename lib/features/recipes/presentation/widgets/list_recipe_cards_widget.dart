@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:food_campanion/features/recipes/domain/entities/recipe_entity.dart';
 import 'package:food_campanion/features/recipes/presentation/widgets/recipe_card_widget.dart';
 
-class CardsWidget extends StatelessWidget {
-  final List<RecipeEntity> items;
+class CardsListWidget extends StatelessWidget {
+  final List<dynamic> items;
 
-  const CardsWidget({Key? key, required this.items}) : super(key: key);
+  const CardsListWidget({Key? key, required this.items}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

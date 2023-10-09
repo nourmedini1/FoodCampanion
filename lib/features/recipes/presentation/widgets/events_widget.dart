@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:food_campanion/core/injection_container/injection_container.dart';
 import 'package:food_campanion/features/recipes/domain/entities/event_entity.dart';
-import 'package:food_campanion/features/recipes/presentation/bloc/recipes_bloc/recipes_bloc.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/search_result_bloc/search_result_bloc.dart';
+import 'package:food_campanion/features/recipes/presentation/pages/search_results.dart';
 
 Widget events(List<EventEntity> events) {
   return Column(
@@ -12,6 +13,7 @@ Widget events(List<EventEntity> events) {
       Container(
           height: 300,
           child: ListView.separated(
+              physics: const BouncingScrollPhysics(),
               scrollDirection: Axis.horizontal,
               itemCount: events.length,
               itemBuilder: ((context, index) {
@@ -52,10 +54,10 @@ Widget events(List<EventEntity> events) {
                             context,
                             MaterialPageRoute(
                               builder: (context) => BlocProvider(
-                                create: (context) => sl<RecipesBloc>(),
-                                //    child: SearchResults(
-                                //      item: events[index].name,
-                                //       ),
+                                create: (context) => sl<SearchResultBloc>(),
+                                child: SearchResults(
+                                  id: events[index].name,
+                                ),
                               ),
                             ),
                           );

@@ -2,11 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_campanion/core/injection_container/injection_container.dart';
-import 'package:food_campanion/features/recipes/domain/entities/recipe_entity.dart';
-import 'package:food_campanion/features/recipes/presentation/bloc/recipes_bloc/recipes_bloc.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/recipe_info_bloc/recipe_info_bloc.dart';
 import 'package:food_campanion/features/recipes/presentation/pages/recipe_info_page.dart';
 import 'package:food_campanion/features/users/utils/colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RecipeCardWidget extends StatefulWidget {
   const RecipeCardWidget({
@@ -14,7 +12,7 @@ class RecipeCardWidget extends StatefulWidget {
     required this.items,
   }) : super(key: key);
 
-  final RecipeEntity items;
+  final dynamic items;
 
   @override
   _RecipeCardWidgetState createState() => _RecipeCardWidgetState();
@@ -23,7 +21,6 @@ class RecipeCardWidget extends StatefulWidget {
 class _RecipeCardWidgetState extends State<RecipeCardWidget> {
   @override
   Widget build(BuildContext context) {
-    var sharedPreferences = sl<SharedPreferences>();
     return Stack(
       children: [
         InkWell(
@@ -32,10 +29,10 @@ class _RecipeCardWidgetState extends State<RecipeCardWidget> {
               context,
               MaterialPageRoute(
                 builder: (context) => BlocProvider(
-                  create: (context) => sl<RecipesBloc>(),
-                  //    child: RecipeInfo(
-                  //     item: widget.items,
-                  //    ),
+                  create: (context) => sl<RecipeInfoBloc>(),
+                  child: RecipeInfo(
+                    id: widget.items.id,
+                  ),
                 ),
               ),
             );
@@ -44,10 +41,7 @@ class _RecipeCardWidgetState extends State<RecipeCardWidget> {
             borderRadius: BorderRadius.circular(10),
             child: Container(
               decoration: BoxDecoration(
-                color: sharedPreferences.getBool('dark') == null ||
-                        sharedPreferences.getBool('dark') == true
-                    ? const Color.fromARGB(255, 92, 92, 92)
-                    : whiteCards,
+                color: Colors.white,
                 boxShadow: const [
                   BoxShadow(
                     offset: Offset(-2, -2),
@@ -82,7 +76,7 @@ class _RecipeCardWidgetState extends State<RecipeCardWidget> {
                         placeholder: (context, url) => Container(
                           color: Colors.grey,
                         ),
-                        imageUrl: widget.items.images!.regular!.url!,
+                        imageUrl: widget.items.image,
                         fit: BoxFit.cover,
                         height: 150,
                       ),
@@ -94,17 +88,18 @@ class _RecipeCardWidgetState extends State<RecipeCardWidget> {
                   Container(
                     padding: const EdgeInsets.all(9),
                     child: Text(
-                      widget.items.label!,
+                      widget.items.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontFamily: 'mooli', fontWeight: FontWeight.bold),
                     ),
                   ),
                   Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 4),
                       child: Text(
-                        "${widget.items.cuisineType![0]} and ${widget.items.cuisineType!.length - 1} others",
+                        "${widget.items.readyInMinutes} min to prepare",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontFamily: 'mooli',
@@ -115,7 +110,7 @@ class _RecipeCardWidgetState extends State<RecipeCardWidget> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 4),
                       child: Text(
-                        widget.items.mealType![0],
+                        '${widget.items.servings} servings',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontFamily: 'mooli',

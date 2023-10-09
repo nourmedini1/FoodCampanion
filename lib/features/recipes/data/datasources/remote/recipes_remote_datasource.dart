@@ -1,5 +1,6 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
 
+import 'package:http/http.dart' as http;
 import 'package:food_campanion/core/failures_exceptions/exceptions.dart';
 import 'package:food_campanion/features/recipes/data/models/auto_complete.dart';
 import 'package:food_campanion/features/recipes/data/models/equipement.dart';
@@ -16,20 +17,88 @@ abstract class RecipesRemoteDataSource {
   Future<SearchResultList> getSearchList(String type, int no);
   Future<SearchAutoCompleteList> getAutoCompleteList(String searchText);
   Future<FoodTypeList> getRecipes(String type, int no);
+  Future<List<dynamic>> getRecipe();
 }
 
 class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
-  final Dio dio;
+  final http.Client client;
 
-  RecipesRemoteDatasourceImpl({required this.dio});
+  RecipesRemoteDatasourceImpl({required this.client});
+
+  @override
+  Future<List<dynamic>> getRecipe() async {
+    var infoUrl = '$BASE_URL$RANDOM_RACIPE_PATH&apiKey=$API_KEY';
+    var id = '';
+
+    Recipe racipeInfo;
+    SimilarList similarList;
+    EquipmentsList equipmentList;
+    Nutrient nutrients;
+
+    final res = await client.get(Uri.parse(infoUrl));
+
+    if (res.statusCode == 200) {
+      final body = json.decode(res.body);
+      racipeInfo = Recipe.fromJson(body['recipes'][0]);
+      id = body['recipes'][0]['id'].toString();
+    } else if (res.statusCode == 401) {
+      throw DataUNavailableException();
+    } else {
+      throw DataUNavailableException();
+    }
+
+    var similarUrl = '$BASE_URL$id$SIMILAR_PATH&apiKey=$API_KEY';
+    var equipmentUrl = '$BASE_URL$id$EQUIPMENTS_PATH&apiKey=$API_KEY';
+    var nutritionUrl = '$BASE_URL$id$NUTRITION_PATH&apiKey=$API_KEY';
+
+    final response = await Future.wait([
+      client.get(Uri.parse(similarUrl)),
+      client.get(Uri.parse(equipmentUrl)),
+      client.get(Uri.parse(nutritionUrl))
+    ]);
+
+    if (response[0].statusCode == 200) {
+      final similarbody = json.decode(response[0].body);
+      similarList = SimilarList.fromJson(similarbody);
+    } else if (response[0].statusCode == 401) {
+      throw DataUNavailableException();
+    } else {
+      throw DataUNavailableException();
+    }
+    if (response[1].statusCode == 200) {
+      final equipementbody = json.decode(response[1].body);
+      equipmentList = EquipmentsList.fromJson(equipementbody['equipement']);
+    } else if (response[1].statusCode == 401) {
+      throw DataUNavailableException();
+    } else {
+      throw DataUNavailableException();
+    }
+    if (response[2].statusCode == 200) {
+      final nutrientBody = json.decode(response[2].body);
+      nutrients = Nutrient.fromJson(nutrientBody);
+    } else if (response[2].statusCode == 401) {
+      throw DataUNavailableException();
+    } else {
+      throw DataUNavailableException();
+    }
+
+    return Future.value([
+      racipeInfo,
+      similarList,
+      equipmentList,
+      nutrients,
+    ]);
+  }
+
   @override
   Future<FoodTypeList> getRecipes(String type, int no) async {
-    // ignore: prefer_interpolation_to_compose_strings
-    var url = BASE_URL + "/random?number=$no&tags=$type" + '&apiKey=' + API_KEY;
-    final response = await dio.get(url);
+    var url = '${BASE_URL}random?number=$no&tags=$type&apiKey=$API_KEY';
+    final response = await client.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      return FoodTypeList.fromJson(response.data['recipes']);
+      final body = json.decode(response.body);
+      final List<dynamic> tt = body['recipes'];
+      return Future.value(FoodTypeList.fromJson(tt));
     } else if (response.statusCode == 401) {
       throw DataUNavailableException();
     } else {
@@ -49,46 +118,47 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
     EquipmentsList equipmentList;
     Nutrient nutrients;
     final response = await Future.wait([
-      dio.get(infoUrl),
-      dio.get(similarUrl),
-      dio.get(equipmentUrl),
-      dio.get(nutritionUrl),
+      client.get(Uri.parse(infoUrl)),
+      client.get(Uri.parse(similarUrl)),
+      client.get(Uri.parse(equipmentUrl)),
+      client.get(Uri.parse(nutritionUrl))
     ]);
     if (response[0].statusCode == 200) {
-      racipeInfo = Recipe.fromJson(response[0].data);
+      racipeInfo = Recipe.fromJson(json.decode(response[0].body));
     } else if (response[0].statusCode == 401) {
       throw DataUNavailableException();
     } else {
       throw DataUNavailableException();
     }
     if (response[1].statusCode == 200) {
-      similarList = SimilarList.fromJson(response[1].data);
+      similarList = SimilarList.fromJson(json.decode(response[1].body));
     } else if (response[1].statusCode == 401) {
       throw DataUNavailableException();
     } else {
       throw DataUNavailableException();
     }
     if (response[2].statusCode == 200) {
-      equipmentList = EquipmentsList.fromJson(response[2].data['equipment']);
+      equipmentList =
+          EquipmentsList.fromJson(json.decode(response[2].body)['equipment']);
     } else if (response[2].statusCode == 401) {
       throw DataUNavailableException();
     } else {
       throw DataUNavailableException();
     }
     if (response[3].statusCode == 200) {
-      nutrients = Nutrient.fromJson(response[3].data);
+      nutrients = Nutrient.fromJson(json.decode(response[3].body));
     } else if (response[3].statusCode == 401) {
       throw DataUNavailableException();
     } else {
       throw DataUNavailableException();
     }
 
-    return [
+    return Future.value([
       racipeInfo,
       similarList,
       equipmentList,
       nutrients,
-    ];
+    ]);
   }
 
   @override
@@ -96,10 +166,11 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
     var url =
         'https://api.spoonacular.com/recipes/complexSearch?query=$type&number=$no&apiKey=${API_KEY}';
 
-    var response = await dio.get(url);
+    var response = await client.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      return SearchResultList.fromJson(response.data['results']);
+      return Future.value(
+          SearchResultList.fromJson(json.decode(response.body)['results']));
     } else if (response.statusCode == 401) {
       throw DataUNavailableException();
     } else {
@@ -111,10 +182,11 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
   Future<SearchAutoCompleteList> getAutoCompleteList(String searchText) async {
     var url =
         'https://api.spoonacular.com/recipes/autocomplete?number=100&query=$searchText&apiKey=${API_KEY}';
-    var response = await dio.get(url);
+    var response = await client.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
-      return SearchAutoCompleteList.fromJson(response.data);
+      return Future.value(
+          SearchAutoCompleteList.fromJson(json.decode(response.body)));
     } else if (response.statusCode == 401) {
       throw DataUNavailableException();
     } else {

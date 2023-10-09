@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_campanion/core/injection_container/injection_container.dart';
-import 'package:food_campanion/features/recipes/presentation/bloc/recipes_bloc/recipes_bloc.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/home_bloc/home_bloc.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/search_cubit/search_cubit.dart';
 import 'package:food_campanion/features/recipes/presentation/pages/Search_page.dart';
 import 'package:food_campanion/features/recipes/presentation/pages/favorites_page.dart';
 import 'package:food_campanion/features/recipes/presentation/pages/home_page.dart';
@@ -21,11 +22,11 @@ class _BottomNavViewState extends State<BottomNavView> {
 
   final List<Widget> _widgetOptions = <Widget>[
     BlocProvider(
-      create: (context) => sl<RecipesBloc>(),
+      create: (context) => sl<HomeBloc>(),
       child: const HomePage(),
     ),
     BlocProvider(
-      create: (context) => sl<RecipesBloc>(),
+      create: (context) => sl<SearchCubit>(),
       child: const SearchPage(),
     ),
     const FavoritesPage(),

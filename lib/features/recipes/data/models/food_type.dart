@@ -20,6 +20,15 @@ class FoodType {
       servings: json['servings'].toString(),
     );
   }
+  toJson() {
+    return {
+      'id': id,
+      'title': name,
+      'image': image,
+      'readyInMinutes': readyInMinutes,
+      'servings': servings
+    };
+  }
 }
 
 class FoodTypeList {

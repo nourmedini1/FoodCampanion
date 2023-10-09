@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_campanion/core/animation/delayed_display.dart';
 import 'package:food_campanion/core/injection_container/injection_container.dart';
-import 'package:food_campanion/features/recipes/domain/entities/recipe_entity.dart';
-import 'package:food_campanion/features/recipes/presentation/bloc/recipes_bloc/recipes_bloc.dart';
+import 'package:food_campanion/features/recipes/data/models/food_type.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/recipe_info_bloc/recipe_info_bloc.dart';
 import 'package:food_campanion/features/recipes/presentation/pages/recipe_info_page.dart';
 import 'package:food_campanion/features/users/utils/colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ListItem extends StatefulWidget {
-  final RecipeEntity meal;
+  final FoodType meal;
   const ListItem({
     Key? key,
     required this.meal,
@@ -23,7 +22,6 @@ class ListItem extends StatefulWidget {
 class _Listmealtate extends State<ListItem> {
   @override
   Widget build(BuildContext context) {
-    var sharedPreferences = sl<SharedPreferences>();
     return DelayedDisplay(
       delay: const Duration(microseconds: 600),
       child: InkWell(
@@ -32,10 +30,10 @@ class _Listmealtate extends State<ListItem> {
             context,
             MaterialPageRoute(
               builder: (context) => BlocProvider(
-                create: (context) => sl<RecipesBloc>(),
-                //    child: RecipeInfo(
-                //      item: widget.meal,
-                //    ),
+                create: (context) => sl<RecipeInfoBloc>(),
+                child: RecipeInfo(
+                  id: widget.meal.id,
+                ),
               ),
             ),
           );
@@ -44,10 +42,7 @@ class _Listmealtate extends State<ListItem> {
           padding: const EdgeInsets.all(8.0),
           child: Container(
             decoration: BoxDecoration(
-              color: sharedPreferences.getBool('dark') == null ||
-                      sharedPreferences.getBool('dark') == true
-                  ? const Color.fromARGB(255, 92, 92, 92)
-                  : whiteCards,
+              color: Colors.white,
               boxShadow: const [
                 BoxShadow(
                   offset: Offset(-2, -2),
@@ -88,8 +83,7 @@ class _Listmealtate extends State<ListItem> {
                         borderRadius: BorderRadius.circular(10),
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: CachedNetworkImageProvider(
-                              widget.meal.images!.small!.url!),
+                          image: CachedNetworkImageProvider(widget.meal.image),
                         ),
                       ),
                     ),
@@ -105,22 +99,18 @@ class _Listmealtate extends State<ListItem> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          widget.meal.label!,
+                          widget.meal.name,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontFamily: 'mooli',
-                              color: sharedPreferences.getBool('dark') ==
-                                          null ||
-                                      sharedPreferences.getBool('dark') == true
-                                  ? Colors.white
-                                  : black,
+                              color: black,
                               fontSize: 16,
                               fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          '${widget.meal.cuisineType![0]} and ${widget.meal.cuisineType!.length - 1} others',
+                          '${widget.meal.readyInMinutes} min to prepare ',
                           style: TextStyle(
                               fontFamily: 'mooli',
                               color: orange,

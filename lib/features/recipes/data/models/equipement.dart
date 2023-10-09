@@ -13,7 +13,7 @@ class Equipment {
         image: json['image'] as String?,
       );
 
-  toJson() => {
+  Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'localizedName': localizedName,

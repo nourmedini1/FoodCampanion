@@ -23,6 +23,15 @@ class Nutrient {
       good: (json['good'] as List).map((hmm) => Needs.formJson(hmm)).toList(),
     );
   }
+
+  toJson() => {
+        'calories': calories,
+        'carbs': carbs,
+        'fat': fat,
+        'protein': protein,
+        "bad": bad.map((needs) => needs.toJson()).toList(),
+        "good": good.map((needs) => needs.toJson()).toList(),
+      };
 }
 
 class Needs {
@@ -41,4 +50,9 @@ class Needs {
       percentOfDailyNeeds: json['percentOfDailyNeeds'].toString(),
     );
   }
+  toJson() => {
+        'name': name,
+        'amount': amount,
+        'percentOfDailyNeeds': percentOfDailyNeeds,
+      };
 }

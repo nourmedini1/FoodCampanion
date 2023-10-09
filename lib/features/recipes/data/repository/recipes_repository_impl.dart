@@ -4,8 +4,10 @@ import 'package:food_campanion/core/failures_exceptions/failures/failures.dart';
 import 'package:food_campanion/core/network/internet_checker.dart';
 import 'package:food_campanion/features/recipes/data/datasources/local/recipes_local_data_source.dart';
 import 'package:food_campanion/features/recipes/data/datasources/remote/recipes_remote_datasource.dart';
-import 'package:food_campanion/features/recipes/data/models/recipe_model.dart';
-import 'package:food_campanion/features/recipes/domain/entities/recipe_entity.dart';
+import 'package:food_campanion/features/recipes/data/models/auto_complete.dart';
+import 'package:food_campanion/features/recipes/data/models/food_type.dart';
+import 'package:food_campanion/features/recipes/data/models/recipe.dart';
+import 'package:food_campanion/features/recipes/data/models/search_results.dart';
 import 'package:food_campanion/features/recipes/domain/repository/recipes_repository.dart';
 
 class RecipesRepositoryImpl extends RecipesRepository {
@@ -19,225 +21,96 @@ class RecipesRepositoryImpl extends RecipesRepository {
       required this.internetChecker});
 
   @override
-  Future<Either<Failure, List<RecipeEntity>>> breakfastRecipes(
-      String query) async {
-    if (await internetChecker.isConnected) {
-      try {
-        final result = await recipesRemoteDataSource.getRecipes(query, null);
-        return right(result);
-      } on DataUNavailableException {
-        return left(DataUnavailableFailure());
-      }
-    } else {
-      return left(OfflineFailure());
+  Future<Either<Failure, Unit>> addToFavorites(
+      Recipe recipe, String userId) async {
+    try {
+      await recipesLocalDatasource.addToFavorites(recipe, userId);
+      return right(unit);
+    } on DataUNavailableException {
+      return left(Failure());
     }
   }
 
   @override
-  Future<Either<Failure, List<RecipeEntity>>> burgerRecipes(
-      String query) async {
+  Future<Either<Failure, SearchAutoCompleteList>> getAutoCompleteList(
+      String searchText) async {
     if (await internetChecker.isConnected) {
       try {
-        final result = await recipesRemoteDataSource.getRecipes(query, null);
-        return right(result);
+        final result =
+            await recipesRemoteDataSource.getAutoCompleteList(searchText);
+        return Right(result);
       } on DataUNavailableException {
-        return left(DataUnavailableFailure());
+        return Left(DataUnavailableFailure());
       }
     } else {
-      return left(OfflineFailure());
+      return Left(OfflineFailure());
     }
   }
 
   @override
-  Future<Either<Failure, List<RecipeEntity>>> cakeRecipes(String query) async {
-    if (await internetChecker.isConnected) {
-      try {
-        final result = await recipesRemoteDataSource.getRecipes(query, null);
-        return right(result);
-      } on DataUNavailableException {
-        return left(DataUnavailableFailure());
-      }
-    } else {
-      return left(OfflineFailure());
+  Future<Either<Failure, FoodTypeList>> getFavorites(String userId) async {
+    try {
+      final result = await recipesLocalDatasource.getFavorites(userId);
+      return Right(result);
+    } on DataUNavailableException {
+      return left(Failure());
     }
   }
 
   @override
-  Future<Either<Failure, List<RecipeEntity>>> dessertRecipes(
-      String query) async {
+  Future<Either<Failure, List>> getRandomRecipe() async {
     if (await internetChecker.isConnected) {
       try {
-        final result = await recipesRemoteDataSource.getRecipes(query, null);
-        return right(result);
+        final result = await recipesRemoteDataSource.getRecipe();
+        return Right(result);
       } on DataUNavailableException {
-        return left(DataUnavailableFailure());
+        return Left(DataUnavailableFailure());
       }
     } else {
-      return left(OfflineFailure());
+      return Left(OfflineFailure());
     }
   }
 
   @override
-  Future<Either<Failure, List<RecipeEntity>>> dinnerRecipes(
-      String query) async {
+  Future<Either<Failure, List>> getRecipeInfo(String id) async {
     if (await internetChecker.isConnected) {
       try {
-        final result = await recipesRemoteDataSource.getRecipes(query, null);
-        return right(result);
+        final result = await recipesRemoteDataSource.getRecipeInfo(id);
+        return Right(result);
       } on DataUNavailableException {
-        return left(DataUnavailableFailure());
+        return Left(DataUnavailableFailure());
       }
     } else {
-      return left(OfflineFailure());
+      return Left(OfflineFailure());
     }
   }
 
   @override
-  Future<Either<Failure, List<RecipeEntity>>> drinksRecipes(
-      String query) async {
+  Future<Either<Failure, FoodTypeList>> getRecipes(String type, int no) async {
     if (await internetChecker.isConnected) {
       try {
-        final result = await recipesRemoteDataSource.getRecipes(query, null);
-        return right(result);
+        final result = await recipesRemoteDataSource.getRecipes(type, no);
+        return Right(result);
       } on DataUNavailableException {
-        return left(DataUnavailableFailure());
+        return Left(DataUnavailableFailure());
       }
     } else {
-      return left(OfflineFailure());
+      return Left(OfflineFailure());
     }
   }
 
   @override
-  Future<Either<Failure, List<RecipeEntity>>> pizzaRecipes(String query) async {
+  Future<Either<Failure, SearchResultList>> getSearchResults(
+      String type, int no) async {
     if (await internetChecker.isConnected) {
       try {
-        final result = await recipesRemoteDataSource.getRecipes(query, null);
-        return right(result);
+        final result = await recipesRemoteDataSource.getSearchList(type, no);
+        return Right(result);
       } on DataUNavailableException {
-        return left(DataUnavailableFailure());
+        return Left(DataUnavailableFailure());
       }
     } else {
-      return left(OfflineFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<RecipeEntity>>> popularRecipes(
-      String query) async {
-    if (await internetChecker.isConnected) {
-      try {
-        final result = await recipesRemoteDataSource.getRecipes(query, null);
-        return right(result);
-      } on DataUNavailableException {
-        return left(DataUnavailableFailure());
-      }
-    } else {
-      return left(OfflineFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<RecipeEntity>>> proteinRecipes(
-      String query) async {
-    if (await internetChecker.isConnected) {
-      try {
-        final result = await recipesRemoteDataSource.getRecipes(query, null);
-        return right(result);
-      } on DataUNavailableException {
-        return left(DataUnavailableFailure());
-      }
-    } else {
-      return left(OfflineFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<RecipeEntity>>> randomRecipe(
-      String query, Map<String, dynamic> options) async {
-    if (await internetChecker.isConnected) {
-      try {
-        final result = await recipesRemoteDataSource.getRecipes(query, options);
-        return right(result);
-      } on DataUNavailableException {
-        return left(DataUnavailableFailure());
-      }
-    } else {
-      return left(OfflineFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<RecipeEntity>>> relatedToCountryRecipes(
-      String country) async {
-    if (await internetChecker.isConnected) {
-      try {
-        final result = await recipesRemoteDataSource.getRecipes(country, null);
-        return right(result);
-      } on DataUNavailableException {
-        return left(DataUnavailableFailure());
-      }
-    } else {
-      return left(OfflineFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<RecipeEntity>>> searchRecipe(
-      String query, Map<String, dynamic> options) async {
-    if (await internetChecker.isConnected) {
-      try {
-        final result = await recipesRemoteDataSource.getRecipes(query, options);
-        return right(result);
-      } on DataUNavailableException {
-        return left(DataUnavailableFailure());
-      }
-    } else {
-      return left(OfflineFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<RecipeEntity>>> veganRecipes(String query) async {
-    if (await internetChecker.isConnected) {
-      try {
-        final result = await recipesRemoteDataSource.getRecipes(query, null);
-        return right(result);
-      } on DataUNavailableException {
-        return left(DataUnavailableFailure());
-      }
-    } else {
-      return left(OfflineFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, Unit>> addToFavotites(
-      RecipeEntity recipeEntity, String userId) async {
-    if (await internetChecker.isConnected) {
-      try {
-        await recipesLocalDatasource.addToFavorites(
-            RecipeModel.fromEntity(recipeEntity), userId);
-        return right(unit);
-      } catch (e) {
-        return left(Failure());
-      }
-    } else {
-      return left(OfflineFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<RecipeEntity>>> getFavorites(
-      String userId) async {
-    if (await internetChecker.isConnected) {
-      try {
-        final result = await recipesLocalDatasource.getFavorites(userId);
-        return right(result);
-      } on DataUNavailableException {
-        return left(DataUnavailableFailure());
-      }
-    } else {
-      return left(OfflineFailure());
+      return Left(OfflineFailure());
     }
   }
 }
