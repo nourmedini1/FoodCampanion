@@ -84,7 +84,7 @@ class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
                               behavior: SnackBarBehavior.floating,
                               margin: EdgeInsets.only(
                                   bottom:
-                                      MediaQuery.of(context).size.height - 100,
+                                      MediaQuery.of(context).size.height - 150,
                                   left: 10,
                                   right: 10),
                               duration: const Duration(seconds: 3),
@@ -101,7 +101,7 @@ class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
                               behavior: SnackBarBehavior.floating,
                               margin: EdgeInsets.only(
                                   bottom:
-                                      MediaQuery.of(context).size.height - 100,
+                                      MediaQuery.of(context).size.height - 150,
                                   left: 10,
                                   right: 10),
                               duration: const Duration(seconds: 3),
@@ -135,13 +135,16 @@ class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
                             ],
                           );
                         } else {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              addToFavoritesButton(
-                                  sharedPreferences.getString('CURRENT_USER')!),
-                            ],
+                          return DelayedDisplay(
+                            delay: const Duration(milliseconds: 600),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                addToFavoritesButton(sharedPreferences
+                                    .getString('CURRENT_USER')!),
+                              ],
+                            ),
                           );
                         }
                       },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_campanion/core/widgets/loading_widget.dart';
+import 'package:food_campanion/features/recipes/presentation/pages/bottom_navigation_page.dart';
 import 'package:food_campanion/features/users/domain/entities/user_entity.dart';
 import 'package:food_campanion/features/users/presentation/bloc/save_user_bloc/save_user_bloc.dart';
 import 'package:food_campanion/features/users/presentation/bloc/users_bloc/users_bloc.dart';
@@ -396,7 +397,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                                   bottom: MediaQuery.of(context)
                                                           .size
                                                           .height -
-                                                      100,
+                                                      130,
                                                   left: 10,
                                                   right: 10),
                                               duration:
@@ -530,10 +531,9 @@ class _SignUpPageState extends State<SignUpPage> {
 GestureDetector procedToHomeButton(BuildContext context) {
   return GestureDetector(
     onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const Home(),
-        )),
+      context,
+      MaterialPageRoute(builder: (context) => const BottomNavView()),
+    ),
     child: const Padding(
       padding: EdgeInsets.only(top: 10),
       child: Text(

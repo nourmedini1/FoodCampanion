@@ -5,6 +5,7 @@ import 'package:food_campanion/features/recipes/data/datasources/remote/recipes_
 import 'package:food_campanion/features/recipes/data/repository/recipes_repository_impl.dart';
 import 'package:food_campanion/features/recipes/domain/repository/recipes_repository.dart';
 import 'package:food_campanion/features/recipes/domain/usecases/add_to_favorites_usecase.dart';
+import 'package:food_campanion/features/recipes/domain/usecases/delete_from_favorites_usecase.dart';
 import 'package:food_campanion/features/recipes/domain/usecases/get_auto_complete_list_usecase.dart';
 import 'package:food_campanion/features/recipes/domain/usecases/get_favorites_usecase.dart';
 import 'package:food_campanion/features/recipes/domain/usecases/get_random_recipe_usecase.dart';
@@ -127,6 +128,8 @@ Future<void> init() async {
       () => GetAutoCompleteListUsecase(recipesRepository: sl()));
   sl.registerLazySingleton(() => GetRecipeInfoUsecase(recipesRepository: sl()));
   sl.registerLazySingleton(() => GetFavoritesUsecase(recipesRepository: sl()));
+  sl.registerLazySingleton(
+      () => DeleteFromFavoritesUsecase(recipesRepository: sl()));
 
 //------------- presentation ----------------
 //bloc

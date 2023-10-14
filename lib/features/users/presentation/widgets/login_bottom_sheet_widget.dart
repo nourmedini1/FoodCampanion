@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_campanion/core/widgets/loading_widget.dart';
+import 'package:food_campanion/features/recipes/presentation/pages/bottom_navigation_page.dart';
 import 'package:food_campanion/features/users/presentation/bloc/users_bloc/users_bloc.dart';
 import 'package:food_campanion/features/users/presentation/widgets/button.dart';
 import 'package:food_campanion/features/users/utils/colors.dart';
@@ -171,12 +172,17 @@ class _LoginBottomSheetWidgetState extends State<LoginBottomSheetWidget> {
                           bottom: MediaQuery.of(context).size.height - 100,
                           left: 10,
                           right: 10),
-                      duration: const Duration(seconds: 3),
+                      duration: const Duration(seconds: 1),
                       content: Text(
                         state.successMessage,
                         style: const TextStyle(
                             fontWeight: FontWeight.w500, color: Colors.white),
                       )));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const BottomNavView()),
+                  );
                 }
               },
               builder: (context, state) {

@@ -63,13 +63,25 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
             ),
           ),
           const SizedBox(height: 20),
-          header("Recommended Categories", "Categories"),
+          DelayedDisplay(
+            delay: const Duration(milliseconds: 600),
+            child: header("Recommended Categories", "Categories"),
+          ),
           const SizedBox(height: 20),
-          suggestions(CategoryEntity.getCategories()),
+          DelayedDisplay(
+            delay: const Duration(milliseconds: 600),
+            child: suggestions(CategoryEntity.getCategories()),
+          ),
           const SizedBox(height: 10),
-          header("Recipes For Your events", "Events"),
+          DelayedDisplay(
+            delay: const Duration(milliseconds: 600),
+            child: header("Recipes For Your events", "Events"),
+          ),
           const SizedBox(height: 20),
-          events(EventEntity.getEvents()),
+          DelayedDisplay(
+            delay: const Duration(milliseconds: 600),
+            child: events(EventEntity.getEvents()),
+          ),
           const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14.0),

@@ -113,4 +113,15 @@ class RecipesRepositoryImpl extends RecipesRepository {
       return Left(OfflineFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, Unit>> deleteFromFavorites(
+      Recipe recipe, String userId) async {
+    try {
+      await recipesLocalDatasource.deleteFromFavorites(recipe, userId);
+      return right(unit);
+    } on DataUNavailableException {
+      return left(Failure());
+    }
+  }
 }

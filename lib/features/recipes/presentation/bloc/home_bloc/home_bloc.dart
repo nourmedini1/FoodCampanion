@@ -22,8 +22,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             getRecipesUsecase.call('burger', 3),
             getRecipesUsecase.call('pizza', 5),
             getRecipesUsecase.call('cake', 3),
-            getRecipesUsecase.call('soup', 5),
-            getRecipesUsecase.call('salad', 5),
+            getRecipesUsecase.call('soup', 3),
+            getRecipesUsecase.call('salad', 3),
           ]);
           emit(HomeSuccessState(
               breakfast: data[0].fold((failure) => [], (food) => food.list),

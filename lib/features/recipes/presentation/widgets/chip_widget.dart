@@ -8,7 +8,6 @@ import 'package:food_campanion/features/recipes/presentation/bloc/search_result_
 import 'package:food_campanion/features/recipes/presentation/pages/search_results.dart';
 
 import 'package:food_campanion/features/users/utils/colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChipWidget extends StatelessWidget {
   final String text;
@@ -16,7 +15,6 @@ class ChipWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var sharedPreferences = sl<SharedPreferences>();
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: DelayedDisplay(
@@ -51,10 +49,7 @@ class ChipWidget extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
-                color: sharedPreferences.getBool('dark') == null ||
-                        sharedPreferences.getBool('dark') == true
-                    ? const Color.fromARGB(255, 92, 92, 92)
-                    : whiteCards,
+                color: whiteCards,
                 boxShadow: const [
                   BoxShadow(
                     offset: Offset(-2, -2),
