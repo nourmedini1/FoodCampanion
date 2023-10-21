@@ -13,6 +13,8 @@ import 'package:food_campanion/features/recipes/domain/usecases/get_recipe_info_
 import 'package:food_campanion/features/recipes/domain/usecases/get_recipes_usecase.dart';
 import 'package:food_campanion/features/recipes/domain/usecases/get_search_results_usecase.dart';
 import 'package:food_campanion/features/recipes/presentation/bloc/add_favorite_bloc/add_favorite_bloc.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/delete_from_favorites_bloc/delete_from_favorites_bloc.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/get_favorites_bloc/get_favorites_bloc.dart';
 import 'package:food_campanion/features/recipes/presentation/bloc/home_bloc/home_bloc.dart';
 import 'package:food_campanion/features/recipes/presentation/bloc/random_bloc/random_bloc.dart';
 import 'package:food_campanion/features/recipes/presentation/bloc/recipe_info_bloc/recipe_info_bloc.dart';
@@ -26,9 +28,11 @@ import 'package:food_campanion/features/users/domain/usecases/delete_user_usecas
 import 'package:food_campanion/features/users/domain/usecases/get_saved_users_usecase.dart';
 import 'package:food_campanion/features/users/domain/usecases/login_local_usecase.dart';
 import 'package:food_campanion/features/users/domain/usecases/login_remote_usecase.dart';
+import 'package:food_campanion/features/users/domain/usecases/logout_usecase.dart';
 import 'package:food_campanion/features/users/domain/usecases/save_user_usecase.dart';
 import 'package:food_campanion/features/users/domain/usecases/sign_in_usecase.dart';
 import 'package:food_campanion/features/users/domain/usecases/update_user_usecase.dart';
+import 'package:food_campanion/features/users/presentation/bloc/logout_bloc/logout_bloc.dart';
 import 'package:food_campanion/features/users/presentation/bloc/save_user_bloc/save_user_bloc.dart';
 import 'package:food_campanion/features/users/presentation/bloc/users_bloc/users_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -81,10 +85,12 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SaveUserUsecase(usersRepository: sl()));
   sl.registerLazySingleton(() => SignInUsecase(usersRepository: sl()));
   sl.registerLazySingleton(() => UpdateUserUsecase(usersRepository: sl()));
+  sl.registerLazySingleton(() => LogoutUsecase(usersRepository: sl()));
 
   // ---------------- presentation ------------------------------
   //bloc
   sl.registerFactory(() => SaveUserBloc(saveUserUsecase: sl()));
+  sl.registerFactory(() => LogoutBloc(logoutUsecase: sl()));
   sl.registerFactory(() => UsersBloc(
       deleteUserUsecase: sl(),
       getSavedUsersUsecase: sl(),
@@ -139,4 +145,7 @@ Future<void> init() async {
   sl.registerFactory(() => SearchResultBloc(getSearchResultsUsecase: sl()));
   sl.registerFactory(() => HomeBloc(getRecipesUsecase: sl()));
   sl.registerFactory(() => AddFavoriteBloc(addToFavoritesUsecase: sl()));
+  sl.registerFactory(
+      () => DeleteFromFavoritesBloc(deleteFromFavoritesUsecase: sl()));
+  sl.registerFactory(() => GetFavoritesBloc(getFavoritesUsecase: sl()));
 }

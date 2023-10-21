@@ -4,6 +4,7 @@ import 'package:food_campanion/core/widgets/custom_error_widget.dart';
 import 'package:food_campanion/core/widgets/loading_widget.dart';
 import 'package:food_campanion/features/recipes/presentation/bloc/home_bloc/home_bloc.dart';
 import 'package:food_campanion/features/recipes/presentation/widgets/home_widget.dart';
+import 'package:food_campanion/features/users/utils/colors.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -45,15 +46,19 @@ class _HomeRecipeScreenState extends State<HomePage> {
             if (state is HomeLoadingState) {
               return const Center(child: LoadingWidget());
             } else if (state is HomeSuccessState) {
-              return HomeScreenWidget(
-                  breakfast: state.breakfast,
-                  vegan: state.vegan,
-                  drinks: state.drinks,
-                  burgers: state.burgers,
-                  pizza: state.pizza,
-                  cake: state.cake,
-                  soup: state.soup,
-                  salad: state.salad);
+              return RefreshIndicator(
+                color: orange,
+                onRefresh: () => refreshHome(context),
+                child: HomeScreenWidget(
+                    breakfast: state.breakfast,
+                    vegan: state.vegan,
+                    drinks: state.drinks,
+                    burgers: state.burgers,
+                    pizza: state.pizza,
+                    cake: state.cake,
+                    soup: state.soup,
+                    salad: state.salad),
+              );
             } else if (state is HomeErrorState) {
               return Center(child: customErrorWidget('Something went Wrong'));
             } else {
@@ -63,5 +68,9 @@ class _HomeRecipeScreenState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Future<void> refreshHome(BuildContext context) async {
+    return BlocProvider.of<HomeBloc>(context).add(RefreshHomeEvent());
   }
 }

@@ -17,3 +17,5 @@ class DeleteUserException implements Exception {}
 class EmptyLocalDataBaseException implements Exception {}
 
 class DataUNavailableException implements Exception {}
+
+class LogoutException implements Exception {}

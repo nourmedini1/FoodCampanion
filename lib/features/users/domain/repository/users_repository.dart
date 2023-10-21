@@ -14,4 +14,5 @@ abstract class UsersRepository {
   Future<Either<Failure, Unit>> deleteUser(UserEntity userEntity);
   Future<Either<Failure, Unit>> updateUser(
       UserEntity userEntity); // shared preferences
+  Future<Either<Failure, Unit>> logout();
 }

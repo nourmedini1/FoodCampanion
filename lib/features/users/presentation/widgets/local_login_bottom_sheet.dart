@@ -68,7 +68,7 @@ class _LoginBottomSheetWidgetState extends State<LocalLoginBottomSheetWidget> {
                     style: const TextStyle(
                       color: Colors.white,
                       fontFamily: 'mooli',
-                      fontSize: 22,
+                      fontSize: 16,
                       fontWeight: FontWeight.normal,
                     ),
                   ),
@@ -102,7 +102,7 @@ class _LoginBottomSheetWidgetState extends State<LocalLoginBottomSheetWidget> {
                   hintStyle: const TextStyle(
                       color: Color.fromARGB(66, 47, 46, 46),
                       fontFamily: 'mooli',
-                      fontSize: 20),
+                      fontSize: 16),
                   focusColor: Colors.orange,
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -163,7 +163,7 @@ class _LoginBottomSheetWidgetState extends State<LocalLoginBottomSheetWidget> {
                                 fontWeight: FontWeight.w500,
                                 color: Colors.white),
                           )));
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const BottomNavView()),

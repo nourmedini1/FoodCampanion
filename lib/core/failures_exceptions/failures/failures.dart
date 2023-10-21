@@ -24,3 +24,5 @@ class SigninFailure extends Failure {}
 class OfflineFailure extends Failure {}
 
 class DataUnavailableFailure extends Failure {}
+
+class LogoutFailure extends Failure {}

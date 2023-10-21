@@ -122,4 +122,14 @@ class UsersRepositoryImpl extends UsersRepository {
       return left(OfflineFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, Unit>> logout() async {
+    try {
+      await localDatasource.logout();
+      return right(unit);
+    } on LogoutException {
+      return left(LogoutFailure());
+    }
+  }
 }

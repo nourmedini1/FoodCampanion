@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
 import 'package:food_campanion/core/failures_exceptions/exceptions.dart';
+import 'package:food_campanion/features/users/utils/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/user_model.dart';
@@ -12,6 +13,7 @@ abstract class LocalDatasource {
   Future<List<UserModel>> getSavedUsers();
   Future<Unit> updateLocal(UserModel userModel);
   Future<Unit> deleteUser(UserModel userModel);
+  Future<Unit> logout();
 }
 
 class LocalDataSourceImpl extends LocalDatasource {
@@ -71,19 +73,20 @@ class LocalDataSourceImpl extends LocalDatasource {
   Future<Unit> updateLocal(UserModel userModel) async {
     try {
       List<String>? savedUsers = sharedPreferences.getStringList('SAVED_USERS');
-      final savedUsersMap = savedUsers
-          ?.map<Map<String, dynamic>>((user) => json.decode(user))
-          .toList();
-      final savedUsersModel = savedUsersMap!
-          .map<UserModel>((jsonUser) => UserModel.fromJson(jsonUser))
-          .toList();
-      savedUsersModel.removeWhere((element) => element == userModel);
-      savedUsersModel.add(userModel);
-      final List<String> listUserStrings = savedUsersModel
-          .map<String>((user) => json.encode(user.toJson()))
-          .toList();
-      sharedPreferences.setStringList('SAVED_USERS', listUserStrings);
-
+      if (savedUsers != null) {
+        final savedUsersMap = savedUsers
+            .map<Map<String, dynamic>>((user) => json.decode(user))
+            .toList();
+        final savedUsersModel = savedUsersMap
+            .map<UserModel>((jsonUser) => UserModel.fromJson(jsonUser))
+            .toList();
+        savedUsersModel.removeWhere((element) => element.id == userModel.id);
+        savedUsersModel.add(userModel);
+        final List<String> listUserStrings = savedUsersModel
+            .map<String>((user) => json.encode(user.toJson()))
+            .toList();
+        sharedPreferences.setStringList('SAVED_USERS', listUserStrings);
+      }
       return Future.value(unit);
     } catch (e) {
       throw LocalUpdateException();
@@ -108,6 +111,16 @@ class LocalDataSourceImpl extends LocalDatasource {
       return Future.value(unit);
     } catch (e) {
       throw DeleteUserException();
+    }
+  }
+
+  @override
+  Future<Unit> logout() {
+    try {
+      sharedPreferences.setString(CURRENT_USER, '');
+      return Future.value(unit);
+    } catch (e) {
+      throw LogoutException();
     }
   }
 }

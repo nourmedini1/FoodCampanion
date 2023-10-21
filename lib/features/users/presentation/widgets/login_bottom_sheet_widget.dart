@@ -73,7 +73,7 @@ class _LoginBottomSheetWidgetState extends State<LoginBottomSheetWidget> {
                   hintStyle: const TextStyle(
                       color: Color.fromARGB(66, 47, 46, 46),
                       fontFamily: 'mooli',
-                      fontSize: 20),
+                      fontSize: 16),
                   focusColor: Colors.orange,
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -97,7 +97,7 @@ class _LoginBottomSheetWidgetState extends State<LoginBottomSheetWidget> {
             ),
             TextFormField(
               style: const TextStyle(
-                  color: Colors.black87, fontFamily: 'mooli', fontSize: 20),
+                  color: Colors.black87, fontFamily: 'mooli', fontSize: 16),
               controller: passwordController,
               focusNode: passwordNode,
               keyboardType: TextInputType.text,
@@ -122,7 +122,7 @@ class _LoginBottomSheetWidgetState extends State<LoginBottomSheetWidget> {
                   hintStyle: const TextStyle(
                       color: Color.fromARGB(66, 47, 46, 46),
                       fontFamily: 'mooli',
-                      fontSize: 20),
+                      fontSize: 16),
                   focusColor: Colors.orange,
                   focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -178,7 +178,7 @@ class _LoginBottomSheetWidgetState extends State<LoginBottomSheetWidget> {
                         style: const TextStyle(
                             fontWeight: FontWeight.w500, color: Colors.white),
                       )));
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) => const BottomNavView()),

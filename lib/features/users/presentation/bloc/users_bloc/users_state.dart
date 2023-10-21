@@ -58,3 +58,25 @@ class UsersDeleteErrorState extends UsersState {
   @override
   List<Object> get props => [errorMessage];
 }
+
+class UsersUpdateSuccessState extends UsersState {
+  final String successMessage;
+  final UserEntity? userEntity;
+
+  const UsersUpdateSuccessState({
+    this.userEntity,
+    required this.successMessage,
+  });
+  @override
+  List<Object> get props => [successMessage];
+}
+
+class UsersUpdateErrorState extends UsersState {
+  final String errorMessage;
+
+  const UsersUpdateErrorState({required this.errorMessage});
+  @override
+  List<Object> get props => [errorMessage];
+}
+
+class UsersUpdateLoadingState extends UsersState {}

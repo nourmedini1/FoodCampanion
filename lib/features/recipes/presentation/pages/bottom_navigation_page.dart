@@ -2,18 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_campanion/core/injection_container/injection_container.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/get_favorites_bloc/get_favorites_bloc.dart';
 import 'package:food_campanion/features/recipes/presentation/bloc/home_bloc/home_bloc.dart';
 import 'package:food_campanion/features/recipes/presentation/bloc/search_cubit/search_cubit.dart';
 import 'package:food_campanion/features/recipes/presentation/pages/Search_page.dart';
 import 'package:food_campanion/features/recipes/presentation/pages/favorites_page.dart';
 import 'package:food_campanion/features/recipes/presentation/pages/home_page.dart';
-import 'package:food_campanion/features/recipes/presentation/pages/more_page.dart';
+import 'package:food_campanion/features/users/presentation/pages/settings_page.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 
 class BottomNavView extends StatefulWidget {
   const BottomNavView({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _BottomNavViewState createState() => _BottomNavViewState();
 }
 
@@ -29,8 +31,11 @@ class _BottomNavViewState extends State<BottomNavView> {
       create: (context) => sl<SearchCubit>(),
       child: const SearchPage(),
     ),
-    const FavoritesPage(),
-    const MorePage(),
+    BlocProvider(
+      create: (context) => sl<GetFavoritesBloc>(),
+      child: const FavoritesPage(),
+    ),
+    const SettingsPage(),
   ];
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
@@ -64,11 +69,11 @@ class _BottomNavViewState extends State<BottomNavView> {
       PersistentBottomNavBarItem(
         inactiveColorPrimary: Colors.grey.shade600,
         icon: const Icon(
-          Icons.list,
+          Icons.settings,
         ),
         iconSize: 20,
         activeColorPrimary: Colors.orangeAccent,
-        title: ("More"),
+        title: ("Settings"),
       ),
     ];
   }
@@ -101,7 +106,7 @@ class _BottomNavViewState extends State<BottomNavView> {
         resizeToAvoidBottomInset: true,
         hideNavigationBarWhenKeyboardShows: true,
         popAllScreensOnTapOfSelectedTab: true,
-        navBarStyle: NavBarStyle.style6,
+        navBarStyle: NavBarStyle.style9,
       ),
     );
   }

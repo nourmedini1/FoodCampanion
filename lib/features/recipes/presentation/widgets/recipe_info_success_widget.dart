@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_campanion/core/animation/delayed_display.dart';
@@ -14,6 +16,7 @@ import 'package:food_campanion/features/recipes/presentation/widgets/ingredient_
 import 'package:food_campanion/features/recipes/presentation/widgets/list_recipe_cards_widget.dart';
 import 'package:food_campanion/features/recipes/presentation/widgets/nutrirents.dart';
 import 'package:food_campanion/features/recipes/presentation/widgets/summary_widget.dart';
+import 'package:food_campanion/features/users/data/models/user_model.dart';
 import 'package:food_campanion/features/users/utils/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -114,6 +117,9 @@ class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
                         }
                       },
                       builder: (context, state) {
+                        String? id = UserModel.fromJson(json.decode(
+                                sharedPreferences.getString('CURRENT_USER')!))
+                            .id;
                         if (state is AddFavoriteLoading) {
                           return const LoadingWidget();
                         } else if (state is AddFavoriteSuccess) {
@@ -121,8 +127,7 @@ class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              addToFavoritesButton(
-                                  sharedPreferences.getString('CURRENT_USER')!),
+                              addToFavoritesButton(id),
                             ],
                           );
                         } else if (state is AddFavoriteError) {
@@ -130,8 +135,7 @@ class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              addToFavoritesButton(
-                                  sharedPreferences.getString('CURRENT_USER')!),
+                              addToFavoritesButton(id),
                             ],
                           );
                         } else {
@@ -141,8 +145,7 @@ class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                addToFavoritesButton(sharedPreferences
-                                    .getString('CURRENT_USER')!),
+                                addToFavoritesButton(id),
                               ],
                             ),
                           );
@@ -273,16 +276,16 @@ class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
     );
   }
 
-  GestureDetector addToFavoritesButton(String userId) {
+  GestureDetector addToFavoritesButton(String? userId) {
     return GestureDetector(
       onTap: () {
         setState(() {
           widget.pressed = !widget.pressed;
         });
         widget.pressed
-            ? null
-            : BlocProvider.of<AddFavoriteBloc>(context).add(
-                AddFavoriteRecipeEvent(recipe: widget.info, userId: userId));
+            ? BlocProvider.of<AddFavoriteBloc>(context).add(
+                AddFavoriteRecipeEvent(recipe: widget.info, userId: userId!))
+            : null;
       },
       child: Container(
         height: 50,

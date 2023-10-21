@@ -77,10 +77,10 @@ class _SearchResultresulttate extends State<SearchResultItem> {
                 ),
               ),
               const SizedBox(
-                height: 10,
+                height: 5,
               ),
               Container(
-                padding: const EdgeInsets.all(9),
+                padding: const EdgeInsets.all(5),
                 child: Text(
                   widget.result.name,
                   maxLines: 2,
@@ -92,7 +92,7 @@ class _SearchResultresulttate extends State<SearchResultItem> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.all(9),
+                padding: const EdgeInsets.all(5),
                 child: const Text(
                   '45 minutes to prepare ',
                   maxLines: 1,

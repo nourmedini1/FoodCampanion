@@ -71,7 +71,7 @@ class LoginPage extends StatelessWidget {
 
   GestureDetector signUpTextButton(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(
+      onTap: () => Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (_) => const SignUpPage(),
