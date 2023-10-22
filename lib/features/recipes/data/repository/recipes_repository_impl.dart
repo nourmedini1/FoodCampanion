@@ -116,7 +116,7 @@ class RecipesRepositoryImpl extends RecipesRepository {
 
   @override
   Future<Either<Failure, Unit>> deleteFromFavorites(
-      Recipe recipe, String userId) async {
+      FoodType recipe, String userId) async {
     try {
       await recipesLocalDatasource.deleteFromFavorites(recipe, userId);
       return right(unit);

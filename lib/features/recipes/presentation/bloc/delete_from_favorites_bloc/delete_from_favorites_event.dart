@@ -7,8 +7,10 @@ sealed class DeleteFromFavoritesEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class DeleteFromFavoritesInitialize extends DeleteFromFavoritesEvent {}
+
 class DeleteFromFavoriteRecipesEvent extends DeleteFromFavoritesEvent {
-  final Recipe recipe;
+  final FoodType recipe;
   final String userId;
 
   const DeleteFromFavoriteRecipesEvent(

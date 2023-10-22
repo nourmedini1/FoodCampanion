@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:food_campanion/features/recipes/data/models/recipe.dart';
+import 'package:food_campanion/features/recipes/data/models/food_type.dart';
 import 'package:food_campanion/features/recipes/domain/usecases/delete_from_favorites_usecase.dart';
 
 part 'delete_from_favorites_event.dart';
@@ -16,7 +16,9 @@ class DeleteFromFavoritesBloc
         final result =
             await deleteFromFavoritesUsecase.call(event.recipe, event.userId);
         result.fold((failure) => emit(DeleteFromFavoritesError()),
-            (unit) => DeleteFromFavoritesSuccess());
+            (unit) => emit(DeleteFromFavoritesSuccess()));
+      } else if (event is DeleteFromFavoritesInitialize) {
+        emit(DeleteFromFavoritesInitial());
       }
     });
   }

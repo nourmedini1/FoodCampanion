@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:food_campanion/features/recipes/data/models/food_type.dart';
-import 'package:food_campanion/features/recipes/presentation/widgets/horizontal_recipe_card_widget.dart';
+import 'package:food_campanion/features/recipes/presentation/widgets/favorite_item.dart';
 
 class FavoritesWidget extends StatelessWidget {
   final List<FoodType> favorites;
+  final String userId;
 
-  const FavoritesWidget({super.key, required this.favorites});
+  const FavoritesWidget(
+      {super.key, required this.favorites, required this.userId});
+
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
@@ -16,7 +19,10 @@ class FavoritesWidget extends StatelessWidget {
                 itemBuilder: (context, i) {
                   final info = favorites[i];
 
-                  return ListItem(meal: info);
+                  return FavoriteItem(
+                    meal: info,
+                    userId: userId,
+                  );
                 },
                 itemCount: favorites.length)));
   }

@@ -62,11 +62,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     color: orange,
                     onRefresh: (() => refreshFavorites(context, userId)),
                     child: Center(
-                        child: FavoritesWidget(favorites: state.favorites)));
+                        child: FavoritesWidget(
+                            favorites: state.favorites, userId: userId!)));
               } else if (state is GetFavoritesError) {
-                return Center(
-                    child:
-                        customErrorWidget('There are no favorite recipes yet'));
+                return RefreshIndicator(
+                    color: orange,
+                    onRefresh: (() => refreshFavorites(context, userId)),
+                    child: Center(
+                        child:
+                        customErrorWidget('There are no favorite recipes yet')));
+
               }
               return const LoadingWidget();
             },

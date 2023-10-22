@@ -8,7 +8,7 @@ import 'package:food_campanion/features/recipes/data/models/search_results.dart'
 abstract class RecipesRepository {
   Future<Either<Failure, Unit>> addToFavorites(Recipe recipe, String userId);
   Future<Either<Failure, Unit>> deleteFromFavorites(
-      Recipe recipe, String userId);
+      FoodType recipe, String userId);
   Future<Either<Failure, FoodTypeList>> getFavorites(String userId);
   Future<Either<Failure, FoodTypeList>> getRecipes(String type, int no);
   Future<Either<Failure, List<dynamic>>> getRandomRecipe();

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_campanion/core/injection_container/injection_container.dart';
 import 'package:food_campanion/features/recipes/presentation/bloc/add_favorite_bloc/add_favorite_bloc.dart';
+import 'package:food_campanion/features/recipes/presentation/bloc/delete_from_favorites_bloc/delete_from_favorites_bloc.dart';
 import 'package:food_campanion/features/recipes/presentation/pages/bottom_navigation_page.dart';
 import 'package:food_campanion/features/users/presentation/bloc/logout_bloc/logout_bloc.dart';
 import 'package:food_campanion/features/users/presentation/bloc/save_user_bloc/save_user_bloc.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: ((context) => sl<UsersBloc>())),
         BlocProvider(create: ((context) => sl<SaveUserBloc>())),
         BlocProvider(create: ((context) => sl<LogoutBloc>())),
+        BlocProvider(create: (context) => sl<DeleteFromFavoritesBloc>()),
         BlocProvider(create: ((context) => sl<AddFavoriteBloc>())),
       ],
       child: MaterialApp(
