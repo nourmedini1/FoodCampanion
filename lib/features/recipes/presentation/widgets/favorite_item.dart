@@ -36,7 +36,6 @@ class _Listmealtate extends State<FavoriteItem> {
       delay: const Duration(microseconds: 600),
       child: InkWell(
         onLongPress: () {
-          print('pressed');
           AwesomeDialog(
                   title: 'Delete from favorites',
                   titleTextStyle: const TextStyle(

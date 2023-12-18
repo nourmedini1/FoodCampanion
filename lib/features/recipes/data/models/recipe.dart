@@ -111,7 +111,7 @@ class Recipe {
         dishTypes: json['dishTypes'] as List<dynamic>?,
         diets: json['diets'] as List<dynamic>?,
         occasions: json['occasions'] as List<dynamic>?,
-        instructions: json['instructions'] as String?,
+        instructions: stringifyInstructions(json['instructions']),
         analyzedInstructions: (json['analyzedInstructions'] as List<dynamic>?)
             ?.map((e) => AnalyzedInstruction.fromJson(e))
             .toList(),
@@ -161,10 +161,19 @@ class Recipe {
 }
 
 String stringifySummary(String summary) {
-  final toReplace = ["<b>", "</b>", "<a href=\\", "</a>"];
+  final toReplace = ["<b>", "</b>", "<a href=\\", "<a href=", "</a>"];
   for (var element in toReplace) {
     summary = summary.replaceAll(element, "");
   }
   summary = summary.replaceAll(".", ".\n");
+  return summary;
+}
+
+String stringifyInstructions(String summary) {
+  final toReplace = ["<ol>", "<li>", "</li>", "</ol>"];
+  for (var element in toReplace) {
+    summary = summary.replaceAll(element, "");
+  }
+
   return summary;
 }

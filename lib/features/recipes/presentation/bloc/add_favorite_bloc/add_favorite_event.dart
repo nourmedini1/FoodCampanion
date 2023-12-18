@@ -7,6 +7,8 @@ sealed class AddFavoriteEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class AddFavoriteInitialize extends AddFavoriteEvent {}
+
 class AddFavoriteRecipeEvent extends AddFavoriteEvent {
   final Recipe recipe;
   final String userId;

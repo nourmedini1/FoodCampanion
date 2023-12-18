@@ -30,7 +30,7 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
     var infoUrl = '$BASE_URL$RANDOM_RACIPE_PATH&apiKey=$API_KEY';
     var id = '';
 
-    Recipe racipeInfo;
+    Recipe recipeInfo;
     SimilarList similarList;
     EquipmentsList equipmentList;
     Nutrient nutrients;
@@ -39,7 +39,7 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
 
     if (res.statusCode == 200) {
       final body = json.decode(res.body);
-      racipeInfo = Recipe.fromJson(body['recipes'][0]);
+      recipeInfo = Recipe.fromJson(body['recipes'][0]);
       id = body['recipes'][0]['id'].toString();
     } else if (res.statusCode == 401) {
       throw DataUNavailableException();
@@ -83,7 +83,7 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
     }
 
     return Future.value([
-      racipeInfo,
+      recipeInfo,
       similarList,
       equipmentList,
       nutrients,
@@ -92,7 +92,8 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
 
   @override
   Future<FoodTypeList> getRecipes(String type, int no) async {
-    var url = '${BASE_URL}random?number=$no&tags=$type&apiKey=$API_KEY';
+    var url =
+        '${BASE_URL}random?number=$no&tags=$type&apiKey=${HOME_API_KEYS[0]}';
     final response = await client.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -101,6 +102,20 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
       return Future.value(FoodTypeList.fromJson(tt));
     } else if (response.statusCode == 401) {
       throw DataUNavailableException();
+    } else if (response.statusCode == 402) {
+      var url2 =
+          '${BASE_URL}random?number=$no&tags=$type&apiKey=${HOME_API_KEYS[1]}';
+      final response2 = await client.get(Uri.parse(url2));
+
+      if (response2.statusCode == 200) {
+        final body2 = json.decode(response2.body);
+        final List<dynamic> tt2 = body2['recipes'];
+        return Future.value(FoodTypeList.fromJson(tt2));
+      } else if (response.statusCode == 401) {
+        throw DataUNavailableException();
+      } else {
+        throw DataUNavailableException();
+      }
     } else {
       throw DataUNavailableException();
     }
@@ -108,12 +123,12 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
 
   @override
   Future<List<dynamic>> getRecipeInfo(String id) async {
-    var infoUrl = '$BASE_URL$id$INFORMATION_PATH&apiKey=$API_KEY';
-    var similarUrl = '$BASE_URL$id$SIMILAR_PATH&apiKey=$API_KEY';
-    var equipmentUrl = '$BASE_URL$id$EQUIPMENTS_PATH&apiKey=$API_KEY';
-    var nutritionUrl = '$BASE_URL$id$NUTRITION_PATH&apiKey=$API_KEY';
+    var infoUrl = '$BASE_URL$id$INFORMATION_PATH&apiKey=$RECIPE_INFO_API_KEY';
+    var similarUrl = '$BASE_URL$id$SIMILAR_PATH&apiKey=$API_KEY_SEARCH';
+    var equipmentUrl = '$BASE_URL$id$EQUIPMENTS_PATH&apiKey=$API_KEY_SEARCH';
+    var nutritionUrl = '$BASE_URL$id$NUTRITION_PATH&apiKey=$API_KEY_SEARCH';
 
-    Recipe racipeInfo;
+    Recipe recipeInfo;
     SimilarList similarList;
     EquipmentsList equipmentList;
     Nutrient nutrients;
@@ -124,7 +139,7 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
       client.get(Uri.parse(nutritionUrl))
     ]);
     if (response[0].statusCode == 200) {
-      racipeInfo = Recipe.fromJson(json.decode(response[0].body));
+      recipeInfo = Recipe.fromJson(json.decode(response[0].body));
     } else if (response[0].statusCode == 401) {
       throw DataUNavailableException();
     } else {
@@ -154,7 +169,7 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
     }
 
     return Future.value([
-      racipeInfo,
+      recipeInfo,
       similarList,
       equipmentList,
       nutrients,
@@ -164,7 +179,7 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
   @override
   Future<SearchResultList> getSearchList(String type, int no) async {
     var url =
-        'https://api.spoonacular.com/recipes/complexSearch?query=$type&number=$no&apiKey=${API_KEY}';
+        'https://api.spoonacular.com/recipes/complexSearch?query=$type&number=$no&apiKey=${API_KEY_AUTO_COMPLETE}';
 
     var response = await client.get(Uri.parse(url));
 
@@ -181,7 +196,7 @@ class RecipesRemoteDatasourceImpl extends RecipesRemoteDataSource {
   @override
   Future<SearchAutoCompleteList> getAutoCompleteList(String searchText) async {
     var url =
-        'https://api.spoonacular.com/recipes/autocomplete?number=100&query=$searchText&apiKey=${API_KEY}';
+        'https://api.spoonacular.com/recipes/autocomplete?number=100&query=$searchText&apiKey=${API_KEY_AUTO_COMPLETE}';
     var response = await client.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

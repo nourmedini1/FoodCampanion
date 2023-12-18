@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\lib",
+    "\\lib\\features",
+    "\\lib\\features\\recipes",
+    "\\lib\\features\\recipes\\domain",
+    "\\lib\\features\\recipes\\domain\\entities"
+  ],
+  "SelectedNode": "\\lib\\features\\recipes\\domain\\entities\\category_entity.dart",
+  "PreviewInSolutionExplorer": false
+}

@@ -16,14 +16,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         try {
           emit(HomeLoadingState());
           final data = await Future.wait([
-            getRecipesUsecase.call('breakfast', 0),
-            getRecipesUsecase.call('vegan', 0),
-            getRecipesUsecase.call('drinks', 0),
-            getRecipesUsecase.call('burger', 0),
-            getRecipesUsecase.call('pizza', 0),
-            getRecipesUsecase.call('cake', 0),
-            getRecipesUsecase.call('soup', 0),
-            getRecipesUsecase.call('salad', 0),
+            getRecipesUsecase.call('breakfast', 5),
+            getRecipesUsecase.call('vegan', 3),
+            getRecipesUsecase.call('drinks', 5),
+            getRecipesUsecase.call('burger', 3),
+            getRecipesUsecase.call('pizza', 5),
+            getRecipesUsecase.call('cake', 3),
+            getRecipesUsecase.call('soup', 5),
+            getRecipesUsecase.call('salad', 3),
           ]);
           emit(HomeSuccessState(
               breakfast: data[0].fold((failure) => [], (food) => food.list),

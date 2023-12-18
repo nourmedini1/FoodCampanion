@@ -17,6 +17,8 @@ class AddFavoriteBloc extends Bloc<AddFavoriteEvent, AddFavoriteState> {
             await addToFavoritesUsecase.call(event.recipe, event.userId);
         result.fold((failure) => emit(AddFavoriteError()),
             (unit) => emit(AddFavoriteSuccess()));
+      } else if (event is AddFavoriteInitialize) {
+        emit(AddFavoriteInitial());
       }
     });
   }

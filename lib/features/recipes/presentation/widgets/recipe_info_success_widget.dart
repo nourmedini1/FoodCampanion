@@ -6,6 +6,7 @@ import 'package:food_campanion/core/animation/delayed_display.dart';
 import 'package:food_campanion/core/injection_container/injection_container.dart';
 import 'package:food_campanion/core/widgets/loading_widget.dart';
 import 'package:food_campanion/features/recipes/data/models/equipement.dart';
+import 'package:food_campanion/features/recipes/data/models/food_type.dart';
 import 'package:food_campanion/features/recipes/data/models/nutrients.dart';
 import 'package:food_campanion/features/recipes/data/models/recipe.dart';
 import 'package:food_campanion/features/recipes/data/models/similar_list.dart';
@@ -22,11 +23,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class RacipeInfoWidget extends StatefulWidget {
-  bool pressed = false;
+  late bool liked = false;
   final Recipe info;
+
   final List<Similar> similarlist;
   final List<Equipment> equipment;
   final Nutrient nutrient;
+  late String? id = '';
+  List<FoodType> favorites = [];
+  SharedPreferences sharedPreferences = sl<SharedPreferences>();
 
   RacipeInfoWidget({
     Key? key,
@@ -42,8 +47,33 @@ class RacipeInfoWidget extends StatefulWidget {
 
 class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
   @override
+  void initState() {
+    super.initState();
+    FoodType meal = FoodType(
+        id: widget.info.id.toString(),
+        name: widget.info.title!,
+        image: widget.info.image!,
+        readyInMinutes: widget.info.readyInMinutes.toString(),
+        servings: widget.info.servings.toString());
+    widget.id = UserModel.fromJson(
+            json.decode(widget.sharedPreferences.getString('CURRENT_USER')!))
+        .id;
+
+    final jsonFavorites =
+        widget.sharedPreferences.getStringList('$widget.id-favorites');
+    if (jsonFavorites != null) {
+      List<Map<String, dynamic>> fav = jsonFavorites
+          .map<Map<String, dynamic>>((e) => json.decode(e))
+          .toList();
+      final FoodTypeList favoriteRecipes = FoodTypeList.fromJson(fav);
+      widget.favorites = favoriteRecipes.list;
+      widget.liked =
+          widget.favorites.isEmpty || !widget.favorites.contains(meal);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    SharedPreferences sharedPreferences = sl<SharedPreferences>();
     return SafeArea(
       child: CustomScrollView(
         slivers: [
@@ -117,26 +147,24 @@ class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
                         }
                       },
                       builder: (context, state) {
-                        String? id = UserModel.fromJson(json.decode(
-                                sharedPreferences.getString('CURRENT_USER')!))
-                            .id;
                         if (state is AddFavoriteLoading) {
                           return const LoadingWidget();
                         } else if (state is AddFavoriteSuccess) {
+                          BlocProvider.of<AddFavoriteBloc>(context)
+                              .add(AddFavoriteInitialize());
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              addToFavoritesButton(id),
+                              FavoriteButtonWidget(
+                                  widget: widget, text: 'added to favorites'),
                             ],
                           );
                         } else if (state is AddFavoriteError) {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              addToFavoritesButton(id),
-                            ],
+                            children: [addToFavoritesButton(widget.id)],
                           );
                         } else {
                           return DelayedDisplay(
@@ -145,7 +173,11 @@ class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                addToFavoritesButton(id),
+                                !widget.liked
+                                    ? addToFavoritesButton(widget.id)
+                                    : FavoriteButtonWidget(
+                                        widget: widget,
+                                        text: 'added to favorites'),
                               ],
                             ),
                           );
@@ -280,44 +312,56 @@ class _RacipeInfoWidgetState extends State<RacipeInfoWidget> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          widget.pressed = !widget.pressed;
+          widget.liked = !widget.liked;
         });
-        widget.pressed
-            ? BlocProvider.of<AddFavoriteBloc>(context).add(
-                AddFavoriteRecipeEvent(recipe: widget.info, userId: userId!))
-            : null;
+
+        BlocProvider.of<AddFavoriteBloc>(context)
+            .add(AddFavoriteRecipeEvent(recipe: widget.info, userId: userId!));
       },
-      child: Container(
-        height: 50,
-        width: 300,
-        decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          color: orange,
-          boxShadow: const [
-            BoxShadow(
-              offset: Offset(-2, -2),
-              blurRadius: 5,
-              color: Color.fromRGBO(0, 0, 0, 0.05),
-            ),
-            BoxShadow(
-              offset: Offset(2, 2),
-              blurRadius: 5,
-              color: Color.fromRGBO(0, 0, 0, 0.10),
-            )
-          ],
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-          child: Center(
-            child: Text(
-              widget.pressed ? 'Added to favorites' : 'Add to favorites',
-              style: const TextStyle(
-                fontFamily: 'mooli',
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: 22,
-              ),
+      child: FavoriteButtonWidget(widget: widget, text: 'add to favorites'),
+    );
+  }
+}
+
+class FavoriteButtonWidget extends StatelessWidget {
+  const FavoriteButtonWidget(
+      {super.key, required this.widget, required this.text});
+
+  final RacipeInfoWidget widget;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 50,
+      width: 300,
+      decoration: BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: orange,
+        boxShadow: const [
+          BoxShadow(
+            offset: Offset(-2, -2),
+            blurRadius: 5,
+            color: Color.fromRGBO(0, 0, 0, 0.05),
+          ),
+          BoxShadow(
+            offset: Offset(2, 2),
+            blurRadius: 5,
+            color: Color.fromRGBO(0, 0, 0, 0.10),
+          )
+        ],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+        child: Center(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontFamily: 'mooli',
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: 22,
             ),
           ),
         ),
